@@ -1,27 +1,15 @@
-# MusicApp
+Project name: VibeShare
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.1.2.
+Project description:
+Social media allows people to collaborate on Spotify playlists and comment, share, etc., as well as get song suggestions for the combined playlist. Specific features that the project would implement include developing group-centered playlists for events, voting songs or group playlists, etc. This would scale the enjoyment level for a party due to the playlist being developed based on environment and user similarities.
 
-## Development server
+This project is a social media application that allows people to collaborate on Spotify playlists, comment, share, etc. Our project will also generate song suggestions for the combined playlist. Specific features that the project would implement include developing group-centered playlists for events, voting songs or group playlists, etc. These features would increase the enjoyment level for a party due to the playlist being designed based on environment and user similarities.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Members:
+	Frontend:
+Akshat Pant
+Michael Shaffer
+Backend:
+Aryaan Verma
+Martin Kent
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
