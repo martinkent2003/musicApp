@@ -1,16 +1,20 @@
-# Project name: VibeShare
+# Project: VibeShare
 
-## Project description:
-This project is a social media application that allows people to collaborate on Spotify playlists, comment, share, etc. Our project will also generate song suggestions for the combined playlist. Specific features that the project would implement include developing group-centered playlists for events, voting songs or group playlists, etc. These features would increase the enjoyment level for a party due to the playlist being designed based on environment and user similarities.
+## Project Description
+VibeShare is a social media application that allows users to collaborate on Spotify playlists, comment, share, and more. The app also generates song suggestions for the combined playlist.
 
-## Members:
-## Frontend:
-Akshat Pant
-Michael Shaffer
-## Backend:
-Aryaan Verma
-Martin Kent
+Some of the specific features that the project includes are:
+- Developing group-centered playlists for events
+- Voting on songs or group playlists
+- etc.
 
+The goal of VibeShare is to increase the enjoyment level for parties and other events by creating playlists that are designed based on the environment and user similarities.
 
+## Members
+### Frontend
+- Akshat Pant
+- Michael Shaffer
 
-...
+### Backend
+- Aryaan Verma
+- Martin Kent
