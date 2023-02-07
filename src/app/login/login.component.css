@@ -1,0 +1,32 @@
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .form-outline {
+    border: 1px solid black;
+    padding: 20px;
+  }
+  
+  .song-card {
+    display: flex;
+    align-items: center;
+    border: 1px solid gray;
+    margin-bottom: 16px;
+  }
+  .song-info {
+    margin-left: 16px;
+  }
+  .actions {
+    display: flex;
+    margin-top: 16px;
+  }
+  .actions button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #ddd;
+    margin-right: 8px;
+    cursor: pointer;
+  }
+  
