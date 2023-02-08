@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 )
+
 const (
 	port string = ":8000"
 )
@@ -20,6 +21,8 @@ func main() {
 	router.HandleFunc("/posts", addPost).Methods("POST")
 	router.HandleFunc("/groupPost", getGroups).Methods("GET")
 	router.HandleFunc("/groupPost", addGroups).Methods("POST")
+	router.HandleFunc("/userPost", getUsers).Methods("GET")
+	router.HandleFunc("/userPost", addUsers).Methods("POST")
 	log.Print("Server listening on port: ", port)
 	log.Fatalln(http.ListenAndServe(port, router))
 }

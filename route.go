@@ -1,22 +1,22 @@
 package main
 
 import (
+	"Golang-API/entity"
+	groupRepository "Golang-API/groupRepository"
+	repository "Golang-API/repository"
+	userRepository "Golang-API/userRepository"
 	"encoding/json"
 	"math/rand"
 	"net/http"
-
-	"github.com/martinkent2003/Golang-API/entity"
-	"github.com/martinkent2003/Golang-API/repository"
-	"github.com/martinkent2003/Golang-API/groupRepository"
-
 )
 
 var (
-	repo repository.PostRepository = repository.NewPostRepository()
-	groupRepo groupRepository.GroupRepository= groupRepository.NewGroupRepository()
+	repo      repository.PostRepository       = repository.NewPostRepository()
+	groupRepo groupRepository.GroupRepository = groupRepository.NewGroupRepository()
+	userRepo  userRepository.UserRepository   = userRepository.NewUserRepository()
 )
 
-//posts test run get and add
+// posts test run get and add
 func getPosts(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	posts, err := repo.FindAll()
@@ -70,4 +70,31 @@ func addGroups(resp http.ResponseWriter, req *http.Request) {
 	groupRepo.Save(&group)
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(group)
+}
+
+// user get and add
+func getUsers(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	users, err := userRepo.FindAll()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error gettings the users"}`))
+		return
+	}
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(users)
+}
+
+func addUsers(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	var user entity.User
+	err := json.NewDecoder(req.Body).Decode(&user)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error unmarshalling the users array"}`))
+		return
+	}
+	userRepo.Save(&user)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(user)
 }

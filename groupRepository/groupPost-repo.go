@@ -4,7 +4,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/martinkent2003/Golang-API/entity"
+	"Golang-API/entity"
+
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
 )
@@ -35,8 +36,8 @@ func (*groupRepo) Save(group *entity.Group) (*entity.Group, error) {
 	}
 	defer client.Close()
 	_, _, err = client.Collection(collectionName).Add(ctx, map[string]interface{}{
-		"GroupID":    group.GroupID,
-		"Users": group.Users,
+		"GroupID": group.GroupID,
+		"Users":   group.Users,
 	})
 
 	if err != nil {
@@ -66,8 +67,8 @@ func (*groupRepo) FindAll() ([]entity.Group, error) {
 			return nil, err
 		}
 		group := entity.Group{
-			GroupID:    doc.Data()["GroupID"].(string),
-			Users: 		doc.Data()["Users"].(string),
+			GroupID: doc.Data()["GroupID"].(string),
+			Users:   doc.Data()["Users"].(string),
 		}
 		groups = append(groups, group)
 	}
