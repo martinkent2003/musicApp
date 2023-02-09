@@ -4,9 +4,9 @@
 
 ## User stories
 
-- As a Spotify user, I want to be able to log in by using my Spotify.
-- As a party host, I want to be able to create a playlist for my party.
-- As a party goer and music lover, I want to be able to create a playlist with my friends.
+- As a Spotify user, I want to be able to log in by using my Spotify
+- As a party host, I want to be able to create a playlist for my party
+- As a party goer and music lover, I want to be able to create a playlist with my friends
 
 - Sasha wants to be able to make playlist with her friends
 - As a karaoke host, I want to be able to create a playlist for my karaoke party
@@ -32,3 +32,4 @@
 
 - Login page does not integrate with the backend fully and need to fix collections in the database
 - We were not able to create a playlist for the user and add songs to it because did not have time to implement the functionality
+- We did not have enough time to style the UI as much as we would have liked and will need to allocate more time in future sprints to improve the aesthetics of the app
