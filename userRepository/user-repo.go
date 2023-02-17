@@ -37,9 +37,10 @@ func (*userRepo) Save(user *entity.User) (*entity.User, error) {
 	}
 	defer client.Close()
 	_, _, err = client.Collection(collectionName).Add(ctx, map[string]interface{}{
-		"Friends":   user.Friends,
-		"LikedSong": user.LikedSong,
-		"UserID":    user.UserID,
+		"Friends":    user.Friends,
+		"LikedSong":  user.LikedSong,
+		"GroupAdmin": user.GroupAdmin,
+		"UserID":     user.UserID,
 	})
 
 	if err != nil {
@@ -70,10 +71,12 @@ func (*userRepo) FindAll() ([]entity.User, error) {
 		}
 		friends, _ := convertToStringSlice(doc.Data()["Friends"])
 		likedSongs, _ := convertToStringSlice(doc.Data()["LikedSong"])
+		groupAdmin, _ := convertToMap(doc.Data()["GroupAdmin"])
 		user := entity.User{
-			Friends:   friends,
-			LikedSong: likedSongs,
-			UserID:    doc.Data()["UserID"].(string),
+			Friends:    friends,
+			LikedSong:  likedSongs,
+			GroupAdmin: groupAdmin,
+			UserID:     doc.Data()["UserID"].(string),
 		}
 		users = append(users, user)
 	}
@@ -98,4 +101,22 @@ func convertToStringSlice(slice interface{}) ([]string, error) {
 		sSlice[i] = s
 	}
 	return sSlice, nil
+}
+
+func convertToMap(val interface{}) (map[string]bool, error) {
+	if val == nil {
+		return nil, nil
+	}
+	if data, ok := val.(map[string]interface{}); ok {
+		result := make(map[string]bool)
+		for k, v := range data {
+			if boolVal, ok := v.(bool); ok {
+				result[k] = boolVal
+			} else {
+				return nil, fmt.Errorf("invalid value type for key %s: expected bool, got %T", k, v)
+			}
+		}
+		return result, nil
+	}
+	return nil, fmt.Errorf("invalid value type: expected map[string]interface{}, got %T", val)
 }
