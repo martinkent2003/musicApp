@@ -2,6 +2,7 @@ package groupRepository
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"Golang-API/entity"
@@ -67,12 +68,34 @@ func (*userRepo) FindAll() ([]entity.User, error) {
 			log.Fatalf("Failed to iterate the users: %v", err)
 			return nil, err
 		}
+		friends, _ := convertToStringSlice(doc.Data()["Friends"])
+		likedSongs, _ := convertToStringSlice(doc.Data()["LikedSong"])
 		user := entity.User{
-			Friends:   doc.Data()["Friends"].(string),
-			LikedSong: doc.Data()["LikedSong"].(string),
+			Friends:   friends,
+			LikedSong: likedSongs,
 			UserID:    doc.Data()["UserID"].(string),
 		}
 		users = append(users, user)
 	}
 	return users, nil
+}
+
+// convertToStringSlice converts an interface{} slice to a []string slice
+func convertToStringSlice(slice interface{}) ([]string, error) {
+	// type assertion to []interface{}
+	iSlice, ok := slice.([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("input is not a []interface{}")
+	}
+	// create the []string slice
+	sSlice := make([]string, len(iSlice))
+	for i, v := range iSlice {
+		// type assertion to string
+		s, ok := v.(string)
+		if !ok {
+			return nil, fmt.Errorf("element %d is not a string", i)
+		}
+		sSlice[i] = s
+	}
+	return sSlice, nil
 }

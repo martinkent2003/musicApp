@@ -3,46 +3,15 @@ package main
 import (
 	"Golang-API/entity"
 	groupRepository "Golang-API/groupRepository"
-	repository "Golang-API/repository"
 	userRepository "Golang-API/userRepository"
 	"encoding/json"
-	"math/rand"
 	"net/http"
 )
 
 var (
-	repo      repository.PostRepository       = repository.NewPostRepository()
 	groupRepo groupRepository.GroupRepository = groupRepository.NewGroupRepository()
 	userRepo  userRepository.UserRepository   = userRepository.NewUserRepository()
 )
-
-// posts test run get and add
-func getPosts(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-type", "application/json")
-	posts, err := repo.FindAll()
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error gettings the posts"}`))
-		return
-	}
-	resp.WriteHeader(http.StatusOK)
-	json.NewEncoder(resp).Encode(posts)
-}
-
-func addPost(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-type", "application/json")
-	var post entity.Post
-	err := json.NewDecoder(req.Body).Decode(&post)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error unmarshalling the posts array"}`))
-		return
-	}
-	post.ID = rand.Int63()
-	repo.Save(&post)
-	resp.WriteHeader(http.StatusOK)
-	json.NewEncoder(resp).Encode(post)
-}
 
 //group get and add
 
