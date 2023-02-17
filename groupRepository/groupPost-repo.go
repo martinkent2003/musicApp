@@ -66,9 +66,14 @@ func (*groupRepo) FindAll() ([]entity.Group, error) {
 			log.Fatalf("Failed to iterate the groups: %v", err)
 			return nil, err
 		}
+		userInterfaces := doc.Data()["Users"].([]interface{})
+		var users []string
+		for _, u := range userInterfaces {
+			users = append(users, u.(string))
+		}
 		group := entity.Group{
 			GroupID: doc.Data()["GroupID"].(string),
-			Users:   doc.Data()["Users"].(string),
+			Users:   users,
 		}
 		groups = append(groups, group)
 	}
