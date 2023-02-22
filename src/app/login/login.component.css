@@ -1,18 +1,49 @@
+body {
+  background-color: #1a1a1a;
+  color: #f0f0f0;
+}
+h1 {
+  animation: coolTitle 2s ease-in-out infinite;
+  text-align: center;
+}
+
+@keyframes coolTitle {
+  0% {
+    color: red;
+    transform: scale(1);
+  }
+  50% {
+    color: blue;
+    transform: scale(1.2);
+  }
+  100% {
+    color: green;
+    transform: scale(1);
+  }
+}
+
+/* .title {
+  text-align: center;
+  margin-top: 5%;
+} */
+
 .form-container {
+  border: none;
+  margin-top: 5%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .form-outline {
-  border: 1px solid black;
+  border: 1px solid rgb(254, 0, 0);
   padding: 20px;
 }
 
 .song-card {
   display: flex;
   align-items: center;
-  border: 1px solid gray;
+  border: 1px solid rgb(255, 0, 0);
   margin-bottom: 16px;
 }
 .song-info {

@@ -1,81 +1,76 @@
 <!-- login.component.html -->
-<div class = "form-container">
-  <form class="form-outline" (ngSubmit)="onSubmit()">
-    <label>
-      Full Name:
-      <input type="email" [(ngModel)]="email" name="email" required>
-    </label>
-    <br>
-    <label>
-      Email:
-      <input type="password" [(ngModel)]="password" name="password" required>
-    </label>
-    <br>
-    <button type="submit">Log In</button>
-  </form>
-</div>
-<form>
-  <select [(ngModel)]="dropDown" name="dropDown">
-    <option *ngFor="let playlist of playlists" [value]="playlist.name">
-      {{ playlist.name }}
-    </option>
-  </select>
-</form>
-<button (click)="redirectToSpotifyAPI()">Redirect to Spotify API</button>
+  <body>
+    <h1 class="title">VibeShare</h1>
+    <div class="container">
+      <div class = "form-container">
+        <form class="form-outline" (ngSubmit)="onSubmit()">
+          <label>
+            Full Name:
+            <input type="email" [(ngModel)]="email" name="email" required>
+          </label>
+          <br>
+          <label>
+            Email:
+            <input type="password" [(ngModel)]="password" name="password" required>
+          </label>
+          <br>
+          <button type="submit">Log In</button>
+        </form>
+      </div>
+      <form>
+        <select [(ngModel)]="dropDown" name="dropDown">
+          <option *ngFor="let playlist of playlists" [value]="playlist.name">
+            {{ playlist.name }}
+          </option>
+        </select>
+      </form>
+      <button (click)="redirectToSpotifyAPI()">Redirect to Spotify API</button>
 
 
-<button (click)="handleAuth()">handle auth</button>
-<button (click)="getUserData()">Get User Data</button>
-<ul>
-  <li *ngFor="let song of songs">
-    {{ song.name }}
-  </li>
-</ul>
-<div *ngIf="userData">
-  <p>Your Total followers: {{ userData.followers.total }}</p>
-  <p>Email: {{ userData.email }}</p>
-</div>
-<div *ngIf="user">
-  <h2>User Information</h2>
-  <p>ID: {{ user}}</p>
-</div>
-<input #nameInput type="text" (keyup.enter)="addFriend(nameInput.value); nameInput.value=''">
-<button (click)="addFriend(nameInput.value)">Add Friend</button>
+      <button (click)="handleAuth()">handle auth</button>
+      <button (click)="getUserData()">Get User Data</button>
+      <ul>
+        <li *ngFor="let song of songs">
+          {{ song.name }}
+        </li>
+      </ul>
+      <div *ngIf="userData">
+        <p>Your Total followers: {{ userData.followers.total }}</p>
+        <p>Email: {{ userData.email }}</p>
+      </div>
+      <div *ngIf="user">
+        <h2>User Information</h2>
+        <p>ID: {{ user}}</p>
+      </div>
+      <input #nameInput type="text" (keyup.enter)="addFriend(nameInput.value); nameInput.value=''">
+      <button (click)="addFriend(nameInput.value)">Add Friend</button>
 
-<ul>
-  <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
-</ul>
-<select [(ngModel)]="selectedFriend" (ngModelChange)="onFriendSelected(selectedFriend)">
-  <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
-</select>
-<form>
-  <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
-    <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
-      {{ playlist.name }}
-    </option>
-  </select>
-</form>
+      <ul>
+        <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
+      </ul>
+      <select [(ngModel)]="selectedFriend" (ngModelChange)="onFriendSelected(selectedFriend)">
+        <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
+      </select>
+      <form>
+        <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
+          <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
+            {{ playlist.name }}
+          </option>
+        </select>
+      </form>
 
-<p *ngIf="selectedPlaylistF">Added Playlist: {{ selectedPlaylistF}}</p>
+      <p *ngIf="selectedPlaylistF">Added Playlist: {{ selectedPlaylistF}}</p>
 
-<!-- <div class="song-card">
-  <img [src]="randomSongs.imageUrl">
-  <div class="song-info">
-    <h2>{{ song.name }}</h2>
-    <div class="actions">
-      <button (click)="like()">Like</button>
-      <button (click)="dislike()">Dislike</button>
+      <!-- <div class="song-card">
+        <img [src]="randomSongs.imageUrl">
+        <div class="song-info">
+          <h2>{{ song.name }}</h2>
+          <div class="actions">
+            <button (click)="like()">Like</button>
+            <button (click)="dislike()">Dislike</button>
+          </div>
+        </div>
+      </div> -->
     </div>
-  </div>
-</div> -->
+  </body>
 
-
-
-
-
-
-
-
-
-
-  
