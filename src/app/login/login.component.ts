@@ -12,6 +12,7 @@ interface Playlist {
 
   // other properties of a playlist
 }
+
 interface Song {
   id: string;
   name: string;
@@ -46,7 +47,8 @@ export class LoginComponent implements OnInit{
   selectedPlaylistF = '';
   semiMatchedSongs: Array<Song> = []; // make a get request to pull all of the semi matched songs to display to the user
   matchedOwner: Array<Song> = [];// makes get request and allow user to add matched songs to the playlist
-  randomSongs: Song[] = [];
+  randomP: Playlist[] = [];
+  randomActualSongs: Playlist | undefined;
 
   
 
@@ -144,15 +146,15 @@ addPost(): void {
     );
 }
 
-getUserData() {
+getUserData() { // blend fucnitonality
 
 
 
-    //this.spotifyService.createPlaylist('akshawtyy17',this.userIds, this.user);
-
+    this.spotifyService.createPlaylist('akshawtyy17',this.userIds, this.user);
     // start by asking what playlists the user wants to blend 
-
     //start by blending the current users playlist
+
+    
     console.log(this.user)
     this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
       this.playlists = playlists;
@@ -184,62 +186,6 @@ getUserData() {
         }
     });
 
-
-
-
-
-  
-
-
-
-  //   this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
-  //   this.playlists = playlists;
-  //   const selectedPlaylist = this.playlists.find(playlist => playlist.name === 'House/EDM');
-  //   if (selectedPlaylist) {
-  //     this.selectedPlaylistId = selectedPlaylist.id;
-  //     this.spotifyService.getSongs('akshatpant3002', this.selectedPlaylistId).subscribe(songs => {
-  //       //console.log(songs);
-  //       this.songs = songs;
-        
-        
-  //     });
-  //   }
-  // });
-
-  
-
-  
-  // try {
-    
-  //   this.spotifyService.getUser('12153577671').subscribe(data => {
-  //     console.log(data);
-  //     this.userData = data;
-  //   });
-  // } catch (error) {
-  //   console.error(error);
-  // }
-
-  // this.spotifyService.getPlaylists('12153577671').subscribe(playlists => {
-  //   this.playlists = playlists;
-  //   const selectedPlaylist = this.playlists.find(playlist => playlist.name === 'House/EDM');
-  //   if (selectedPlaylist) {
-  //     this.selectedPlaylistId = selectedPlaylist.id;
-  //     this.spotifyService.getSongs('akshatpant3002', this.selectedPlaylistId).subscribe(songs => {
-  //       //console.log(songs);
-  //       this.songs = songs;
-        
-        
-  //     });
-  //   }
-  // });
-
-  //Some identity management solutions, such as Okta or OneLogin, offer automatic user provisioning, which allows you to automatically add users to your applications based on data from a central source, such as a database or HR system. However, this feature is not currently supported by the Spotify Web API.
-  //
-  //
-  //
-
-  
-
   
 }
 
@@ -259,23 +205,6 @@ handleAuth() { // gets acess token
             });
           });
     });
-
-      // this.spotifyService.addUserToSpotifyDeveloperDashboard(this.email, this.password)
-      // .subscribe(() => {
-      //   this.spotifyService.getUserId()
-      //     .subscribe(user => {
-      //       this.user = user;
-      //       this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
-      //         this.playlists = playlists;
-      //       });
-      //     });
-      // });
-  
-  
-
-
-
-
   
 }
 
@@ -291,11 +220,62 @@ redirectToSpotifyAPI(){
 
   onSubmit() {
     //this.spotifyService.authorize(); // when page is redirected you loose the this.email and this.password information
-    this.spotifyService.getRandomSongsFromRapCategory().subscribe(songs => { //NOT WORKING BECAUSE GET CATEGORY ID NOT WORKING
-      this.randomSongs = songs;
-      console.log('getRandomSongs ran');
+    // this.spotifyService.getRandomSongsFromRapCategory().subscribe(songs => { //NOT WORKING BECAUSE GET CATEGORY ID NOT WORKING
+    //   this.randomSongs = songs;
+    //   console.log('getRandomSongs ran');
+    // });
+    this.spotifyService.getRandomSongsFromRapCategory().subscribe(playlists => { // PRETTY CONFIDENT ABT THIS BUT NOT ANYTHING ELSE
+      this.randomP = playlists;
     });
+
+    const firstPlaylist = this.randomP[0];
+    console.log(firstPlaylist); //does not work during first try - works second try
+    console.log(firstPlaylist.songs);
+    
+
+    const playlistContainer = document.querySelector('.song-card')
+    this.randomActualSongs = this.randomP[0]; // something wrong here
+
+    console.log(this.randomActualSongs.songs); //does not work at all 
+
+    //ERROR HERE:  this.randomP does not update immdietly for use afterwards. this.randomActual songs also does not update immdietly for use afterwards. please fix this code
+
+    if (!playlistContainer) {
+      console.error('No .playlist-container element was found in the DOM.');
+      return;
+    }
+    
+
+    if (this.randomActualSongs.songs) {
+      this.randomActualSongs.songs.forEach((song) => { // for each got some error
+      console.log('RAN ONCE')
+      const songContainer = document.createElement('div');
+      songContainer.classList.add('song-container');
+      
+      const songImage = document.createElement('img');
+      songImage.src = song.imageUrl;
+      
+      const likeButton = document.createElement('button');
+      likeButton.innerText = 'Like';
+      
+      const dislikeButton = document.createElement('button');
+      dislikeButton.innerText = 'Dislike';
+      
+      songContainer.appendChild(songImage);
+      songContainer.appendChild(likeButton);
+      songContainer.appendChild(dislikeButton);
+      
+      playlistContainer.appendChild(songContainer);
+    });
+    }else {
+      console.error('firstPlaylist.songs is undefined');
+    }
+
+  
   }
+
+
+
     //console.log()
     // this.email = (<HTMLInputElement>document.getElementsByName('email')[0]).value;
     // this.password = (<HTMLInputElement>document.getElementsByName('password')[0]).value;
