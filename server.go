@@ -18,10 +18,12 @@ func main() {
 		fmt.Fprintln(response, "Router is running...")
 	})
 	router.HandleFunc("/groupPost", getGroups).Methods("GET")
-	router.HandleFunc("/groupPost", addGroups).Methods("POST")
+	router.HandleFunc("/groupPost", addGroups).Methods("POST", "OPTIONS")
 	router.HandleFunc("/userPost", getUsers).Methods("GET")
 	router.HandleFunc("/userPost", addUsers).Methods("POST")
 
 	log.Print("Server listening on port: ", port)
 	log.Fatalln(http.ListenAndServe(port, router))
 }
+
+//router.HandleFunc("/groupPost", addGroups).Methods("POST")

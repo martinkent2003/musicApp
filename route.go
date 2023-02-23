@@ -27,7 +27,20 @@ func getGroups(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(groups)
 }
 
+func handlePreflight(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	resp.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	resp.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	resp.WriteHeader(http.StatusOK)
+}
+
 func addGroups(resp http.ResponseWriter, req *http.Request) {
+	if req.Method == "OPTIONS" {
+		handlePreflight(resp, req)
+		return
+	}
+
+	resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	resp.Header().Set("Content-type", "application/json")
 	var group entity.Group
 	err := json.NewDecoder(req.Body).Decode(&group)

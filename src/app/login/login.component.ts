@@ -13,6 +13,11 @@ interface Playlist {
   // other properties of a playlist
 }
 
+interface Group {
+  groupID: string;
+  users: string[];
+}
+
 interface Song {
   id: string;
   name: string;
@@ -23,6 +28,12 @@ interface Song {
   // other properties of a song
 }
 
+const url = 'http://localhost:8000/groupPost';
+
+const groupData = {
+  "groupID": 'exampleGroup',
+  "users": ['user1', 'user2', 'user3']
+};
 
 
 @Component({
@@ -129,22 +140,14 @@ export class LoginComponent implements OnInit{
 
 
 
+  // const url = 'http://localhost:8000/groupPost';
+
+  // const groupData = {
+  //   groupID: 'exampleGroup',
+  //   users: ['user1', 'user2', 'user3']
+  // };
 
 
-addPost(): void {
-  const body = {
-    "title": "ARYAN VERMA",
-    "text": "ARYAM VERMA"
-  }
-  const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-  const options = { headers: headers };
-
-  this.http.post('http://localhost:8000/posts', body, options)
-    .subscribe(
-        (res) => console.log(res),
-        (err) => console.log(err)
-    );
-}
 
 getUserData() { // blend fucnitonality
 
@@ -215,10 +218,25 @@ redirectToSpotifyAPI(){
 }
 
 
+addPost(): void {
+  const body = {
+    groupID: "BINGO",
+    users: ["user1", "user2", "user3"]
+  };
+  const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  const options = { headers: headers };
 
+  this.http.post<Group>('http://localhost:8000/groupPost', body, options)
+    .subscribe(
+        (res) => console.log(res),
+        (err) => console.log(err)
+    );
+}
 
 
   onSubmit() {
+
+    this.addPost();
     //this.spotifyService.authorize(); // when page is redirected you loose the this.email and this.password information
     // this.spotifyService.getRandomSongsFromRapCategory().subscribe(songs => { //NOT WORKING BECAUSE GET CATEGORY ID NOT WORKING
     //   this.randomSongs = songs;
