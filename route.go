@@ -1,40 +1,69 @@
 package main
 
 import (
-	"encoding/json"
-	"math/rand"
-	"net/http"
-
 	"Golang-API/entity"
-	"Golang-API/repository"
+	groupRepository "Golang-API/groupRepository"
+	userRepository "Golang-API/userRepository"
+	"encoding/json"
+	"net/http"
 )
 
 var (
-	repo repository.PostRepository = repository.NewPostRepository()
+	groupRepo groupRepository.GroupRepository = groupRepository.NewGroupRepository()
+	userRepo  userRepository.UserRepository   = userRepository.NewUserRepository()
 )
 
-func getPosts(response http.ResponseWriter, request *http.Request) {
-	response.Header().Set("Content-Type", "application/json")
-	posts, err := repo.FindAll()
-	if err != nil {
-		response.WriteHeader(http.StatusInternalServerError)
-		response.Write([]byte(`{"error": "Error getting the posts"}`))
-	}
-	response.WriteHeader(http.StatusOK)
-	json.NewEncoder(response).Encode(posts)
-}
+//group get and add
 
-func addPost(response http.ResponseWriter, request *http.Request) {
-	response.Header().Set("Content-Type", "application/json")
-	var post entity.Post
-	err := json.NewDecoder(request.Body).Decode(&post)
+func getGroups(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	groups, err := groupRepo.FindAll()
 	if err != nil {
-		response.WriteHeader(http.StatusInternalServerError)
-		response.Write([]byte(`{"error": "Error unmarshalling the request"}`))
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error gettings the groups"}`))
 		return
 	}
-	post.ID = rand.Int63()
-	repo.Save(&post)
-	response.WriteHeader(http.StatusOK)
-	json.NewEncoder(response).Encode(post)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(groups)
+}
+
+func addGroups(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	var group entity.Group
+	err := json.NewDecoder(req.Body).Decode(&group)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error unmarshalling the groups array"}`))
+		return
+	}
+	groupRepo.Save(&group)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(group)
+}
+
+// user get and add
+func getUsers(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	users, err := userRepo.FindAll()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error gettings the users"}`))
+		return
+	}
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(users)
+}
+
+func addUsers(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	var user entity.User
+	err := json.NewDecoder(req.Body).Decode(&user)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error unmarshalling the users array"}`))
+		return
+	}
+	userRepo.Save(&user)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(user)
 }
