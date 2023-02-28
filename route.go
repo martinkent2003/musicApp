@@ -5,7 +5,10 @@ import (
 	groupRepository "Golang-API/groupRepository"
 	userRepository "Golang-API/userRepository"
 	"encoding/json"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 var (
@@ -64,6 +67,22 @@ func addUsers(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 	userRepo.Save(&user)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(user)
+}
+
+// function that gets a specific user using the userID
+func getUser(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	vars := mux.Vars(req)
+	userID := vars["userID"]
+	log.Printf("Fetching user with ID: %s", userID)
+	user, err := userRepo.FindUser(userID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error getting the user"}`))
+		return
+	}
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(user)
 }

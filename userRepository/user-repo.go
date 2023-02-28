@@ -2,6 +2,7 @@ package groupRepository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -19,6 +20,7 @@ const (
 type UserRepository interface {
 	Save(user *entity.User) (*entity.User, error)
 	FindAll() ([]entity.User, error)
+	FindUser(userID string) (*entity.User, error)
 }
 
 type userRepo struct{}
@@ -48,6 +50,33 @@ func (*userRepo) Save(user *entity.User) (*entity.User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+
+// function to find a specific user with specified userID
+func (*userRepo) FindUser(userID string) (*entity.User, error) {
+	ctx := context.Background()
+	client, err := firestore.NewClient(ctx, projectId)
+	if err != nil {
+		return nil, err
+	}
+
+	defer client.Close()
+
+	q := client.Collection("users").Where("UserID", "==", userID)
+	snap, err := q.Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	if len(snap) == 0 {
+		return nil, errors.New("user not found")
+	}
+
+	var user entity.User
+	snap[0].DataTo(&user)
+	user.UserID = snap[0].Ref.ID
+
+	return &user, nil
 }
 
 func (*userRepo) FindAll() ([]entity.User, error) {

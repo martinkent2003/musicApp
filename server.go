@@ -19,6 +19,7 @@ func main() {
 	})
 	router.HandleFunc("/groupPost", getGroups).Methods("GET")
 	router.HandleFunc("/groupPost", addGroups).Methods("POST")
+	router.HandleFunc("/userPost/{userID}", getUser).Methods("GET")
 	router.HandleFunc("/userPost", getUsers).Methods("GET")
 	router.HandleFunc("/userPost", addUsers).Methods("POST")
 
