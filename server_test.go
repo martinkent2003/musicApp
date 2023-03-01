@@ -22,7 +22,7 @@ var (
 */
 
 func TestGetGroups(t *testing.T) {
-	req, err := http.NewRequest("GET", "/groups", nil)
+	req, err := http.NewRequest("GET", "/groupPost", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,14 +37,14 @@ func TestGetGroups(t *testing.T) {
 	if err := json.Unmarshal(rr.Body.Bytes(), &expectedGroups); err != nil {
 		t.Fatal(err)
 	}
-	if len(expectedGroups) != 2 {
+	if len(expectedGroups) != 12 {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), "[]")
 	}
 }
 
 func TestGetGroup(t *testing.T) {
-	req, err := http.NewRequest("GET", "/groups/{groupID}", nil)
+	req, err := http.NewRequest("GET", "/groupPost/{groupID}", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -81,7 +81,7 @@ func TestAddGroups(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("POST", "/groups", strings.NewReader(string(body)))
+	req, err := http.NewRequest("POST", "/groupPost", strings.NewReader(string(body)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -100,6 +100,88 @@ func TestAddGroups(t *testing.T) {
 	json.Unmarshal(rr.Body.Bytes(), &expected)
 	if expected.GroupID != "test-group" {
 		t.Errorf("handler returned unexpected body: got %v want group with ID 1",
+			expected)
+	}
+}
+
+func TestGetUser(t *testing.T) {
+	req, err := http.NewRequest("GET", "/userPost/{userID}", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	vars := map[string]string{"userID": "123"}
+	req = mux.SetURLVars(req, vars)
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(getUser)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+	expectedUser := entity.User{}
+	if err := json.Unmarshal(rr.Body.Bytes(), &expectedUser); err != nil {
+		t.Fatal(err)
+	}
+	if expectedUser.UserID != "ADkvh36eR6MKlBQSJyzy" {
+		t.Errorf("handler returned unexpected body: got %v want %v",
+			rr.Body.String(), `{"friends":["test","martin","example"],"likedSong":["test","i like this song"],"userID":"ADkvh36eR6MKlBQSJyzy","groupAdmin":{"group1":true,"group2":true}}`)
+	}
+}
+
+func TestGetUsers(t *testing.T) {
+	req, err := http.NewRequest("GET", "/userPost", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(getUsers)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+	expectedUsers := make([]entity.User, 0)
+	if err := json.Unmarshal(rr.Body.Bytes(), &expectedUsers); err != nil {
+		t.Fatal(err)
+	}
+	if len(expectedUsers) != 9 {
+		t.Errorf("handler returned unexpected body: got %v want %v",
+			rr.Body.String(), "[]")
+	}
+}
+
+func TestAddUser(t *testing.T) {
+	user := entity.User{
+		Friends:    []string{"user1", "user2"},
+		LikedSong:  []string{"song1", "song2"},
+		UserID:     "test-user",
+		GroupAdmin: map[string]bool{"group1": true, "group2": true},
+	}
+
+	body, err := json.Marshal(user)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req, err := http.NewRequest("POST", "/userPost", strings.NewReader(string(body)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(addUsers)
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	expected := entity.User{}
+	json.Unmarshal(rr.Body.Bytes(), &expected)
+	if expected.UserID != "test-user" {
+		t.Errorf("handler returned unexpected body: got %v want user with ID test-user",
 			expected)
 	}
 }
