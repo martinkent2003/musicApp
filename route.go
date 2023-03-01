@@ -68,15 +68,28 @@ func getUsers(resp http.ResponseWriter, req *http.Request) {
 }
 
 func addUsers(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-type", "application/json")
-	var user entity.User
-	err := json.NewDecoder(req.Body).Decode(&user)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error unmarshalling the users array"}`))
+	if req.Method == "OPTIONS" {
+		handlePreflight(resp, req)
 		return
 	}
-	userRepo.Save(&user)
-	resp.WriteHeader(http.StatusOK)
-	json.NewEncoder(resp).Encode(user)
+
+	resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	resp.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	resp.Header().Set("Content-type", "application/json")
+
+	if req.Method == "POST" {
+		var user entity.User
+		err := json.NewDecoder(req.Body).Decode(&user)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			resp.Write([]byte(`{"error": "Error unmarshalling the users array"}`))
+			return
+		}
+		userRepo.Save(&user)
+		resp.WriteHeader(http.StatusOK)
+		json.NewEncoder(resp).Encode(user)
+	} else {
+		resp.WriteHeader(http.StatusMethodNotAllowed)
+		resp.Write([]byte(`{"error": "Method not allowed"}`))
+	}
 }

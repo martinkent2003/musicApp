@@ -57,26 +57,7 @@ export class SpotifyService {
     window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`;
     return of({});
   }
-
-
-          //ashah03122003@gmail.com
-        //MAKE ANOTHER BOX FOR ACCOUNT ID
-        //31fh4vqmbqlft3aoc2lbpqus52eq
-        //31fh4vqmbqlft3aoc2lbpqus52eq
-        //console.log(this.getUserId()); 
-
-//assuming I have the access token write me code in SpotifyService.ts to make a file angular to make an API request to the Spotify Accounts Serice to ass a user to my Spotify Developer dashboard account. the request should include the users full name and email.
-//Automatic user provisioning is a process in which user accounts are created and managed automatically, rather than being created and managed manually. To implement automatic user provisioning for your Spotify app, you'll need to use a third-party identity management platform that supports the SCIM (System for Cross-domain Identity Management) standard.
-
-// Here's a high-level overview of the process:
-
-// Set up a SCIM-compatible identity management platform, such as Okta, OneLogin, or Microsoft Azure Active Directory.
-// Configure the identity management platform to communicate with the Spotify API by creating a SCIM API key.
-// Use the API key to automate the process of creating and managing user accounts in your Spotify app. You'll use the API to create new user accounts, update existing accounts, and delete accounts that are no longer needed.
-// This way, you won't have to manually add each user to your Spotify app. The process will be automated, allowing you to scale your app more easily and manage user accounts more efficiently.
-
-
-    
+ 
   async handleAuthorizationResponse() { // gets me the access token
     
     const clientId = '3571de52a7d747358b31518e6b0e6b1f';
@@ -198,54 +179,6 @@ export class SpotifyService {
   );
   }
 
-//   getPlaylists(userId: string): Observable<Array<Playlist>> {
-    // const headers = new HttpHeaders({
-    //     'Authorization': `Bearer ${this.accessToken}`
- 
-    //   });
-//     return this.http.get<any>(`https://api.spotify.com/v1/users/${userId}/playlists`, { headers })
-//       .pipe(
-//         map(response => {
-//           return response.items.map((playlist: any) => {
-//             return {
-//                 songs: this.getSongs(userId, playlist.name), // IDK IF THIS IS STILL NECESSARY BUT LEAVE IT FOR NOW
-//                 id: playlist.id,
-//                 name: playlist.name
-//             } as unknown as Playlist;
-//           });
-//         })
-//       );
-//   }
- 
-
-  // getRandomSongsFromRapCategory(): Observable<Array<Playlist>> { //FIX THIS TO RETURN SONGS FROM THE PLAYLIST. RIGHT NOW CATEGORY IS RETURING PLAYLIST
-  //   return this.getCategoryId('Pop').pipe(
-  //     switchMap(rapCategoryId => {
-  //       if (!rapCategoryId) {
-  //         return of([]);
-  //       }
-  
-  //       const headers = new HttpHeaders({
-  //           'Authorization': `Bearer ${this.accessToken}`
-  //         });
-  
-  //       return this.http.get<any>(`https://api.spotify.com/v1/browse/categories/${rapCategoryId}/playlists`, { headers })
-  //         .pipe(
-  //           map(response => { // works on first try yayyyy
-  //               return response.playlists.items.map(async (playlist: any) => {
-  //                 const songsArb = await this.getSongsFromPlaylist(playlist.id).toPromise();
-  //                 return {
-  //                   songs: songsArb,
-  //                   id: playlist.id,
-  //                   name: playlist.name
-  //                 } as unknown as Playlist;
-  //               });
-  //             })
-  //         );
-  //     })
-  //   );
-  // }
-
   getRandomSongsFromRapCategory(): Observable<Playlist[]> {
     return this.getCategoryId('Pop').pipe(
       switchMap(rapCategoryId => {
@@ -260,10 +193,14 @@ export class SpotifyService {
         return this.http.get<any>(`https://api.spotify.com/v1/browse/categories/${rapCategoryId}/playlists`, { headers })
           .pipe(
             switchMap(response => {
-              const playlistObservables = response.playlists.items.map((playlist: { id: string; name: string;imageURL: string}) => {
-                return this.getSongsFromPlaylist(playlist.id).pipe(
+              const playlistObservables = response.playlists.items.map((playlist: {
+                uri: any; id: string; name: string; imageURL: string 
+}) => {
+                // Fetch the playlist ID from the 'uri' property
+                const id = playlist.uri.split(':')[2];
+                return this.getSongsFromPlaylist(id).pipe(
                   map(songs => ({
-                    id: playlist.id,
+                    id: id,
                     name: playlist.name,
                     songs: songs
                   } as Playlist))
@@ -277,12 +214,6 @@ export class SpotifyService {
     );
   }
   
-  
-
-
-  
-  
-
   getSongsFromPlaylist(playlistId: string): Observable<Array<Song>> {
     const headers = new HttpHeaders({
         'Authorization': `Bearer ${this.accessToken}`
@@ -308,11 +239,6 @@ export class SpotifyService {
         })
       );
   }
-
-
-
-
-
 
 
   getSongs(userId: string,  playlistId: string): Observable<Array<Song>> {
