@@ -59,7 +59,11 @@ func addGroups(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(group)
 }
 
-// user get and add
+/*
+The getUsers function gets all the users from the userRepo and returns them as a JSON array.
+It uses the FindAll method in the UserRepository interface to fetch the users from the Firestore database.
+If there is an error, it returns a 500 status code and an error message.
+*/
 func getUsers(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	users, err := userRepo.FindAll()
@@ -72,6 +76,11 @@ func getUsers(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(users)
 }
 
+/*
+addUsers function adds a new user to the userRepo.
+It uses the Save method in the UserRepository interface to save the user to the Firestore database.
+If there is an error, it returns a 500 status code and an error message.
+*/
 func addUsers(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var user entity.User
@@ -86,7 +95,11 @@ func addUsers(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(user)
 }
 
-// function that gets a specific user using the userID
+/*
+getUser function gets a specific user using the userID.
+It uses the FindUser method in the UserRepository interface to fetch the user from the Firestore database.
+If there is an error, it returns a 500 status code and an error message.
+*/
 func getUser(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	vars := mux.Vars(req)
