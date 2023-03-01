@@ -27,6 +27,6 @@ describe('Login Component', () => {
 
   // it('should display songs on submit', () => {
   //   cy.get('button').contains('Display Songs').click(); // click the Display Songs button
-  //   cy.get('.song-card').should('have.length', 1); // make sure at least one song card is displayed
+  //   cy.get('.song-card').should('have.length', 1); // make sure at least one song card is displayedd
   // });
 });
