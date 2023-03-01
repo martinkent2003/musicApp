@@ -12,6 +12,7 @@ import (
 	"google.golang.org/api/iterator"
 )
 
+// projectID and collectionName for groups in Firebase
 const (
 	projectId      string = "vibeshare-c2a22"
 	collectionName string = "groups"
@@ -30,6 +31,10 @@ func NewGroupRepository() GroupRepository {
 	return &groupRepo{}
 }
 
+/*
+The Save method in GroupRepostitory takes a group object input
+and adds the group to the group collection in the firestore database
+*/
 func (*groupRepo) Save(group *entity.Group) (*entity.Group, error) {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -53,6 +58,12 @@ func (*groupRepo) Save(group *entity.Group) (*entity.Group, error) {
 	return group, nil
 }
 
+/*
+The FindAll method in GroupRepository takes no input and returns a string of
+group objects which are collected from the groups collection in firebase.This method
+uses the convertToStringSlice and convertToMap functions to convert the interface type
+used by firebase into slices and maps that match the type of the fields in the group model.
+*/
 func (*groupRepo) FindAll() ([]entity.Group, error) {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -87,6 +98,13 @@ func (*groupRepo) FindAll() ([]entity.Group, error) {
 	return groups, nil
 }
 
+/*
+The FindGroup method in GroupRepository takes in a groupID input and then searches
+the collection of groups in firestore to check for matching ID. Then it returns a
+group object with the contents of the correspoding document in firestore. However,
+since the groupID is already known as it is used to search, the returned object groupID
+is the document ID for the group in firebase.
+*/
 func (*groupRepo) FindGroup(groupID string) (*entity.Group, error) {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -113,7 +131,7 @@ func (*groupRepo) FindGroup(groupID string) (*entity.Group, error) {
 	return &group, nil
 }
 
-// convertToStringSlice converts an interface{} slice to a []string slice
+// convertToStringSlice converts an interface{} to a []string slice
 func convertToStringSlice(slice interface{}) ([]string, error) {
 	// type assertion to []interface{}
 	iSlice, ok := slice.([]interface{})
@@ -133,6 +151,7 @@ func convertToStringSlice(slice interface{}) ([]string, error) {
 	return sSlice, nil
 }
 
+// convertToMap converts an interface{} to a map with a string key and float value
 func convertToMap(val interface{}) (map[string]float64, error) {
 	if val == nil {
 		return nil, nil
