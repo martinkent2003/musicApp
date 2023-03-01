@@ -16,8 +16,11 @@ var (
 	userRepo  userRepository.UserRepository   = userRepository.NewUserRepository()
 )
 
-//group get and add
-
+/*
+The getGroups function in route.go takes a response writer and request,
+and then calls the FindAll method in groupRepository\groupPost-repo.go
+to get all the groups in the group collection in the firestore database
+*/
 func getGroups(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	groups, err := groupRepo.FindAll()
@@ -30,7 +33,11 @@ func getGroups(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(groups)
 }
 
-// function that gets a specific group using the groupID
+/*
+The getGroup function in route.go takes a response writer and request,
+and then calls the FindGroup method in groupRepository\groupPost-repo.go
+to get a specific group in the group collection in the firestore database
+*/
 func getGroup(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	vars := mux.Vars(req)
@@ -45,6 +52,32 @@ func getGroup(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(group)
 }
+
+/*
+getUser function gets a specific user using the userID.
+It uses the FindUser method in the UserRepository interface to fetch the user from the Firestore database.
+If there is an error, it returns a 500 status code and an error message.
+*/
+func getUser(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	vars := mux.Vars(req)
+	userID := vars["userID"]
+	log.Printf("Fetching user with ID: %s", userID)
+	user, err := userRepo.FindUser(userID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error getting the user"}`))
+		return
+	}
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(user)
+}
+
+/*
+The addGroups function in route.go takes a response writer and request,
+and then calls the Save method in groupRepository\groupPost-repo.go
+to add a group to the group collection in the firestore database
+*/
 func addGroups(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var group entity.Group
@@ -91,26 +124,6 @@ func addUsers(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 	userRepo.Save(&user)
-	resp.WriteHeader(http.StatusOK)
-	json.NewEncoder(resp).Encode(user)
-}
-
-/*
-getUser function gets a specific user using the userID.
-It uses the FindUser method in the UserRepository interface to fetch the user from the Firestore database.
-If there is an error, it returns a 500 status code and an error message.
-*/
-func getUser(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-type", "application/json")
-	vars := mux.Vars(req)
-	userID := vars["userID"]
-	log.Printf("Fetching user with ID: %s", userID)
-	user, err := userRepo.FindUser(userID)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error getting the user"}`))
-		return
-	}
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(user)
 }
