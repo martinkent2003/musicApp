@@ -30,6 +30,38 @@ func getGroups(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(groups)
 }
 
+// function that gets a specific group using the groupID
+func getGroup(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	vars := mux.Vars(req)
+	groupID := vars["groupID"]
+	log.Printf("Fetching group with ID: %s", groupID)
+	group, err := groupRepo.FindGroup(groupID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error getting the group"}`))
+		return
+	}
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(group)
+}
+
+// function that gets a specific user using the userID
+func getUser(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	vars := mux.Vars(req)
+	userID := vars["userID"]
+	log.Printf("Fetching user with ID: %s", userID)
+	user, err := userRepo.FindUser(userID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error getting the user"}`))
+		return
+	}
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(user)
+}
+
 func addGroups(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var group entity.Group
@@ -67,22 +99,6 @@ func addUsers(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 	userRepo.Save(&user)
-	resp.WriteHeader(http.StatusOK)
-	json.NewEncoder(resp).Encode(user)
-}
-
-// function that gets a specific user using the userID
-func getUser(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-type", "application/json")
-	vars := mux.Vars(req)
-	userID := vars["userID"]
-	log.Printf("Fetching user with ID: %s", userID)
-	user, err := userRepo.FindUser(userID)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error getting the user"}`))
-		return
-	}
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(user)
 }
