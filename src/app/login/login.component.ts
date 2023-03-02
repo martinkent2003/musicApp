@@ -211,11 +211,11 @@ export class LoginComponent implements OnInit{
 async getUserData() { // blend fucnitonality - currently just adds both selected playlists to 
 
   
-    this.spotifyService.createPlaylist('akshawtyyYEAT88844',this.userIds, this.user).then(() => {
+    this.spotifyService.createPlaylist('vibeShareTest2023',this.userIds, this.user).then(() => {
 
     this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
     this.playlists = playlists;
-    const selectedPlaylist = this.playlists.find(playlist => playlist.name === 'akshawtyyYEAT88844');
+    const selectedPlaylist = this.playlists.find(playlist => playlist.name === 'vibeShareTest2023');
     this.myPlaylist = selectedPlaylist;
     console.log(selectedPlaylist?.name); // does not work here
     const blendP =  this.Fplaylists.find(playlist => playlist.name === this.playlistS);
@@ -254,7 +254,7 @@ async getUserData() { // blend fucnitonality - currently just adds both selected
     this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
       this.playlists = playlists;
       console.log(this.playlists);
-      const selectedPlaylist = this.playlists.find(playlist => playlist.name === 'akshawtyyYEAT88844');
+      const selectedPlaylist = this.playlists.find(playlist => playlist.name === 'vibeShareTest2023');
       this.myPlaylist = selectedPlaylist;
       console.log(this.dropDown);
       const blendP =  this.playlists.find(playlist => playlist.name === this.dropDown);
