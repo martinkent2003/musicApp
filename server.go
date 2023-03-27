@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -17,13 +18,18 @@ func main() {
 	router.HandleFunc("/", func(response http.ResponseWriter, request *http.Request) {
 		fmt.Fprintln(response, "Router is running...")
 	})
-	router.HandleFunc("/groupPost", getGroups).Methods("GET") // might need to change with option
+
+	router.HandleFunc("/groupPost", getGroups).Methods("GET")
 	router.HandleFunc("/groupPost", addGroups).Methods("POST", "OPTIONS")
-	router.HandleFunc("/userPost", getUsers).Methods("GET") // might need to change with option
+	router.HandleFunc("/groupPost/{groupID}", getGroup).Methods("GET")
+	router.HandleFunc("/userPost/{userID}", getUser).Methods("GET")
+	router.HandleFunc("/userPost", getUsers).Methods("GET")
 	router.HandleFunc("/userPost", addUsers).Methods("POST", "OPTIONS")
 
-	log.Print("Server listening on port: ", port)
-	log.Fatalln(http.ListenAndServe(port, router))
-}
+	headers := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"})
+	origins := handlers.AllowedOrigins([]string{"*"})
 
-//router.HandleFunc("/groupPost", addGroups).Methods("POST")
+	log.Print("Server listening on port: ", port)
+	log.Fatalln(http.ListenAndServe(port, handlers.CORS(headers, methods, origins)(router)))
+}

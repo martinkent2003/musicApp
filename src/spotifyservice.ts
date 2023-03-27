@@ -136,7 +136,7 @@ export class SpotifyService {
       );
   }
 
-  createPlaylist(name: string, userIds: string[], username: string) {
+  createPlaylist(name: string, userIds: string[], username: string) { //userIds pointless bc only owner can edit the playlist
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.accessToken}`);
     console.log(username);

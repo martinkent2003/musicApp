@@ -2,7 +2,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders} from '@angular/common/http';
-import { Observable, of, switchMap } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { SpotifyService } from 'src/spotifyservice';
 import { from } from 'rxjs';
 interface Playlist {
@@ -177,10 +177,15 @@ export class LoginComponent implements OnInit{
     
 
   }
+
   addFriend(name: string) {
     if (name) {
       this.friendsUserId.push(name);
     }
+
+    
+
+
   }
 
 
@@ -211,7 +216,7 @@ export class LoginComponent implements OnInit{
 async getUserData() { // blend fucnitonality - currently just adds both selected playlists to 
 
   
-    this.spotifyService.createPlaylist('vibeShareTest2023',this.userIds, this.user).then(() => {
+    this.spotifyService.createPlaylist('vibeShareTest2023',this.userIds, this.user).then(() => { // this.userIds nothing happens
 
     this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
     this.playlists = playlists;
@@ -285,23 +290,47 @@ async getUserData() { // blend fucnitonality - currently just adds both selected
   })
 }
 
+getUser(): Observable<boolean> {
+  const url = `http://localhost:8000/userPost/${this.user}`;
+  return this.http.get(url).pipe(
+    map((data: any) => {
+      // Check if user ID exists
+      console.log(data);
+      this.friendsUserId = data.friends;
+      return true;
+    }),
+    catchError((error: any) => {
+      console.error(error);
+      return of(false);
+    })
+  );
+}
+
+
+
 handleAuth() { // gets acess token
 
   //ashah03122003@gmail.com
   //ashah03122003@gmail.com
   this.spotifyService.handleAuthorizationResponse().then(() => {
-    console.log(this.email)
-    console.log(this.password)
-
         this.spotifyService.getUserId()
           .subscribe(user => {
             this.user = user;
             this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
               this.playlists = playlists;
+              this.getUser().subscribe(userExists => {
+                if (userExists) {
+                  console.log('User exists');
+                  
+                  // display user friends
+                } else {
+                  console.log('User does not exist');
+                  this.addUser();
+                }
             });
           });
     });
-  
+  });
 }
 
 
@@ -313,7 +342,7 @@ redirectToSpotifyAPI(){
 
 addPost(): void {
   const body = {
-    groupID: "AKSHAWTYY",
+    groupID: "DOCTOR",
     users: this.userIds
   };
   const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -338,9 +367,9 @@ addUser(): void {
   console.log('RAN POST');
 
   const body = {
-    Friends: this.friendsUserId,
+    Friends: this.friendsUserId, // just stores the friends name
     //LikedSong: ["song1", "song2", "song3"],
-    userID: this.user,
+    username: this.user,
     //groupAdmin: { "BINGO": true, "GROUP2": false }
   };
   const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -352,6 +381,8 @@ addUser(): void {
         (err) => console.log(err)
     );
 }
+
+
 
 
   onSubmit() { // displays the songs and makes post request
