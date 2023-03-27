@@ -29,13 +29,13 @@ import { ReactiveFormsModule } from '@angular/forms';
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
-    
+
   ],
   declarations: [
     AppComponent,
-    LoginComponent,
+    // LoginComponent,
     HomeComponent
-   
+
   ],
   providers: [],
   bootstrap: [ AppComponent ]
