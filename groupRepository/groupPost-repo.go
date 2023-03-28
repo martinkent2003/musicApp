@@ -22,6 +22,7 @@ type GroupRepository interface {
 	Save(group *entity.Group) (*entity.Group, error)
 	FindAll() ([]entity.Group, error)
 	FindGroup(id string) (*entity.Group, error)
+	DeleteGroup(groupID string) error
 }
 
 type groupRepo struct{}
@@ -129,6 +130,33 @@ func (*groupRepo) FindGroup(groupID string) (*entity.Group, error) {
 	group.GroupID = snap[0].Ref.ID
 
 	return &group, nil
+}
+
+func (*groupRepo) DeleteGroup(groupID string) error {
+	ctx := context.Background()
+	client, err := firestore.NewClient(ctx, projectId)
+	if err != nil {
+		return err
+	}
+
+	defer client.Close()
+
+	q := client.Collection("groups").Where("GroupID", "==", groupID)
+	snap, err := q.Documents(ctx).GetAll()
+	if err != nil {
+		return err
+	}
+
+	if len(snap) == 0 {
+		return errors.New("group not found")
+	}
+
+	_, err = snap[0].Ref.Delete(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // convertToStringSlice converts an interface{} to a []string slice

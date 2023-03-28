@@ -127,3 +127,33 @@ func addUsers(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(user)
 }
+
+func deleteUser(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	vars := mux.Vars(req)
+	userID := vars["userID"]
+	log.Printf("Deleting user with ID: %s", userID)
+	err := userRepo.DeleteUser(userID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error deleting the user"}`))
+		return
+	}
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode("User deleted successfully")
+}
+
+func deleteGroup(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	vars := mux.Vars(req)
+	groupID := vars["groupID"]
+	log.Printf("Deleting group with ID: %s", groupID)
+	err := groupRepo.DeleteGroup(groupID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error deleting the group"}`))
+		return
+	}
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode("Group deleted successfully")
+}
