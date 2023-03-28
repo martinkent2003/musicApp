@@ -44,7 +44,7 @@ export class SpotifyService {
 
   authorize(): Observable<any> {
     const clientId = '3571de52a7d747358b31518e6b0e6b1f';
-    const redirectUri = 'http://localhost:4200/login';
+    const redirectUri = 'http://localhost:4200';
     const scope =
       'user-read-private user-read-email playlist-modify-public playlist-modify-private playlist-read-collaborative user-library-modify';
     window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`;
@@ -56,9 +56,9 @@ export class SpotifyService {
 
     const clientId = '3571de52a7d747358b31518e6b0e6b1f';
     const clientSecret = '1dff1fc95abd4bf28c5ef114ba7e58bb';
-    const redirectUri = 'http://localhost:4200/login';
+    const redirectUri = 'http://localhost:4200';
 
-    const code = this.getCodeFromRedirectUri();
+    const code = this.getCodeFromRedirectUri(); // fails here
     if (!code) {
       return;
     }
@@ -101,6 +101,7 @@ export class SpotifyService {
   }
 
   getUserId() {
+    //console.log("happy")
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.accessToken}`,
     });
