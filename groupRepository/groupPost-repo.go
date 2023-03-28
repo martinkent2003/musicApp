@@ -131,7 +131,6 @@ func (*groupRepo) FindGroup(groupID string) (*entity.Group, error) {
 
 	return &group, nil
 }
-
 func (*groupRepo) DeleteGroup(groupID string) error {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
