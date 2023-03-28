@@ -309,10 +309,8 @@ getUser(): Observable<boolean> {
 
 
 handleAuth() { // gets acess token
-
-  //ashah03122003@gmail.com
-  //ashah03122003@gmail.com
   this.spotifyService.handleAuthorizationResponse().then(() => {
+    
         this.spotifyService.getUserId()
           .subscribe(user => {
             this.user = user;
