@@ -61,7 +61,7 @@ export class SpotifyService {
   async handleAuthorizationResponse() { // gets me the access token
     
     const clientId = '3571de52a7d747358b31518e6b0e6b1f';
-    const clientSecret = '1dff1fc95abd4bf28c5ef114ba7e58bb';
+    const clientSecret = '1dff1fc95abd4bf28c5ef114ba7e58bb'; 
     const redirectUri = 'http://localhost:4200';
 
     const code = this.getCodeFromRedirectUri();
