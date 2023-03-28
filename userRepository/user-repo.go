@@ -21,13 +21,14 @@ type UserRepository interface {
 	Save(user *entity.User) (*entity.User, error)
 	FindAll() ([]entity.User, error)
 	FindUser(userID string) (*entity.User, error)
+	DeleteUser(userID string) error
 }
 
 type userRepo struct{}
 
 // newUserRepository
 /*
-The NewUserRepository function returns a new userRepo object
+	The NewUserRepository function returns a new userRepo object
 */
 func NewUserRepository() UserRepository {
 	return &userRepo{}
@@ -127,6 +128,33 @@ func (*userRepo) FindAll() ([]entity.User, error) {
 		users = append(users, user)
 	}
 	return users, nil
+}
+
+func (*userRepo) DeleteUser(userID string) error {
+	ctx := context.Background()
+	client, err := firestore.NewClient(ctx, projectId)
+	if err != nil {
+		return err
+	}
+
+	defer client.Close()
+
+	q := client.Collection("users").Where("UserID", "==", userID)
+	snap, err := q.Documents(ctx).GetAll()
+	if err != nil {
+		return err
+	}
+
+	if len(snap) == 0 {
+		return errors.New("user not found")
+	}
+
+	_, err = snap[0].Ref.Delete(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 /*
