@@ -1,16 +1,28 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { LoginComponent } from './app/login/login.component';
+// Importing the Injectable decorator from the Angular Core module, which marks the class as an injectable service.
 
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+// Importing the HttpClient and HttpHeaders classes from the Angular Common HTTP module, which allow us to make HTTP requests to external APIs.
+
+import { Router } from '@angular/router';
+// Importing the Router class from the Angular Router module, which provides the navigation and URL manipulation capabilities for the application.
+
+import { forkJoin, Observable, of } from 'rxjs';
+// Importing the forkJoin, Observable, and of functions from the RxJS library, which provide various utilities for working with asynchronous data streams.
+
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+// Importing several operators from the RxJS library, which we can use to transform and manipulate the data emitted by our observables.
+
+import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI_LOGIN } from './constants';
+// Importing three constants from a local file, which contain our Spotify API client ID and secret, as well as the redirect URI for the login process.
+
+// defines the structure of a playlist object
 interface Playlist {
   songs: Song[];
   id: string;
   name: string;
-  // other properties of a playlist
 }
+
 interface Song {
   id: string;
   name: string;
@@ -43,44 +55,44 @@ export class SpotifyService {
   constructor(private http: HttpClient, private router: Router) {}
 
   authorize(): Observable<any> {
-    const clientId = '3571de52a7d747358b31518e6b0e6b1f';
-    const redirectUri = 'http://localhost:4200/login';
     const scope =
       'user-read-private user-read-email playlist-modify-public playlist-modify-private playlist-read-collaborative user-library-modify';
-    window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`;
+    window.location.href = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI_LOGIN}&scope=${scope}&response_type=code`;
     return of({});
   }
 
   async handleAuthorizationResponse() {
-    // gets me the access token
-
-    const clientId = '3571de52a7d747358b31518e6b0e6b1f';
-    const clientSecret = '1dff1fc95abd4bf28c5ef114ba7e58bb';
-    const redirectUri = 'http://localhost:4200/login';
-
-    const code = this.getCodeFromRedirectUri(); // fails here
+    // This function is responsible for handling the authorization response received from Spotify API.
+    // It first calls the getCodeFromRedirectUri function to get the authorization code from the URL.
+    const code = this.getCodeFromRedirectUri();
     if (!code) {
+      // If code is null, then there is no authorization code available in the URL, so return early.
       return;
     }
 
+    // If an authorization code is available, then create the headers object required for making a POST request to the Spotify API.
     const headers = new HttpHeaders({
-      Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+      Authorization: `Basic ${btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`,
       'Content-Type': 'application/x-www-form-urlencoded',
     });
 
     try {
+      // Make a POST request to the Spotify API to exchange the authorization code for an access token.
       const response = await this.http
         .post<{ access_token: string }>(
           'https://accounts.spotify.com/api/token',
-          `grant_type=authorization_code&code=${code}&redirect_uri=${redirectUri}`,
+          `grant_type=authorization_code&code=${code}&redirect_uri=${REDIRECT_URI_LOGIN}`,
           { headers }
         )
         .toPromise();
       if (response) {
+        // If a response is received, extract the access token from it and store it in the accessToken property of this class.
         this.accessToken = response.access_token;
       }
-      this.router.navigate(['/']);
+      // After successful login, redirect the user to the home page of the application.
+      this.router.navigate(['/home']);
     } catch (error) {
+      // If there is an error, log it to the console.
       console.error(error);
     }
   }
@@ -251,14 +263,8 @@ export class SpotifyService {
         headers,
       })
       .pipe(
-        // tap((response: any) => console.log('Response:', response)),
-        // catchError(error => {
-        //   console.error('Error:', error);
-        //   return of([]);
-        // }),
         map((response) => {
           return response.items.map((song: any) => {
-            //console.log(song.track.name) //work on first try yayyyy
             return {
               id: song.track.id,
               name: song.track.name,
@@ -270,16 +276,21 @@ export class SpotifyService {
       );
   }
 
+  // This function retrieves an array of Song objects from a specific Spotify playlist.
+  // It takes in a userId and a playlistId as parameters.
   getSongs(userId: string, playlistId: string): Observable<Array<Song>> {
+    // Set the authorization header to include the access token.
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.accessToken}`,
     });
+    // Make an HTTP GET request to the Spotify API, passing in the user ID and playlist ID in the URL.
     return this.http
       .get<any>(
         `https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`,
         { headers }
       )
       .pipe(
+        // Use the RxJS map operator to transform the response into an array of Song objects.
         map((response) => {
           return response.items.map((tracks: any) => {
             return {
