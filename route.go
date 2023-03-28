@@ -33,13 +33,6 @@ func getGroups(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(groups)
 }
 
-func handlePreflight(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-	resp.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	resp.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	resp.WriteHeader(http.StatusOK)
-}
-
 /*
 The getGroup function in route.go takes a response writer and request,
 and then calls the FindGroup method in groupRepository\groupPost-repo.go
@@ -86,12 +79,6 @@ and then calls the Save method in groupRepository\groupPost-repo.go
 to add a group to the group collection in the firestore database
 */
 func addGroups(resp http.ResponseWriter, req *http.Request) {
-	if req.Method == "OPTIONS" {
-		handlePreflight(resp, req)
-		return
-	}
-
-	resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	resp.Header().Set("Content-type", "application/json")
 	var group entity.Group
 	err := json.NewDecoder(req.Body).Decode(&group)
@@ -128,28 +115,64 @@ It uses the Save method in the UserRepository interface to save the user to the 
 If there is an error, it returns a 500 status code and an error message.
 */
 func addUsers(resp http.ResponseWriter, req *http.Request) {
-	if req.Method == "OPTIONS" {
-		handlePreflight(resp, req)
+	resp.Header().Set("Content-type", "application/json")
+	var user entity.User
+	err := json.NewDecoder(req.Body).Decode(&user)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error unmarshalling the users array"}`))
 		return
 	}
+	userRepo.Save(&user)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(user)
+}
 
-	resp.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-	resp.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+/*
+putUsers function updates a pre-existing user to the userRepo.
+It uses the Save method in the UserRepository interface to save the user to the Firestore database.
+If there is an error, it returns a 500 status code and an error message.
+*/
+func putUsers(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
-
-	if req.Method == "POST" {
-		var user entity.User
-		err := json.NewDecoder(req.Body).Decode(&user)
-		if err != nil {
-			resp.WriteHeader(http.StatusInternalServerError)
-			resp.Write([]byte(`{"error": "Error unmarshalling the users array"}`))
-			return
-		}
-		userRepo.Save(&user)
-		resp.WriteHeader(http.StatusOK)
-		json.NewEncoder(resp).Encode(user)
-	} else {
-		resp.WriteHeader(http.StatusMethodNotAllowed)
-		resp.Write([]byte(`{"error": "Method not allowed"}`))
+	var user entity.User
+	err := json.NewDecoder(req.Body).Decode(&user)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error unmarshalling the users array"}`))
+		return
 	}
+	userRepo.Update(&user)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(user)
+}
+
+func deleteUser(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	vars := mux.Vars(req)
+	userID := vars["userID"]
+	log.Printf("Deleting user with ID: %s", userID)
+	err := userRepo.DeleteUser(userID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error deleting the user"}`))
+		return
+	}
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode("User deleted successfully")
+}
+
+func deleteGroup(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	vars := mux.Vars(req)
+	groupID := vars["groupID"]
+	log.Printf("Deleting group with ID: %s", groupID)
+	err := groupRepo.DeleteGroup(groupID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error deleting the group"}`))
+		return
+	}
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode("Group deleted successfully")
 }
