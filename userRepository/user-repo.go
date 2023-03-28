@@ -86,17 +86,28 @@ func (*userRepo) Update(user *entity.User) (*entity.User, error) {
 		return nil, err
 	}
 
-	_, err = client.Collection(collectionName).Doc(snap[0].Ref.ID).Set(ctx, map[string]interface{}{
-		"Friends":    user.Friends,
-		"LikedSong":  user.LikedSong,
-		"GroupAdmin": user.GroupAdmin,
-		"UserID":     user.UserID,
-	})
+	// Create a map to hold the fields to update
+	updateFields := make(map[string]interface{})
+
+	// Update only the fields provided in the user entity
+	if user.Friends != nil {
+		updateFields["Friends"] = user.Friends
+	}
+	if user.LikedSong != nil {
+		updateFields["LikedSong"] = user.LikedSong
+	}
+	if user.GroupAdmin != nil {
+		updateFields["GroupAdmin"] = user.GroupAdmin
+	}
+
+	// Update the user document with the provided fields
+	_, err = client.Collection("users").Doc(snap[0].Ref.ID).Set(ctx, updateFields, firestore.MergeAll)
 
 	if err != nil {
-		log.Fatalf("Failed addding a new user: %v", err)
+		log.Fatalf("Failed updating the user: %v", err)
 		return nil, err
 	}
+
 	return user, nil
 }
 
