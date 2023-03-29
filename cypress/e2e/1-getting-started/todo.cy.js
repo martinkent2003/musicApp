@@ -41,7 +41,6 @@ describe('Login Component', () => {
   });
 
 
-
     it('should navigate to home page', () => {
       cy.get('a').contains('Home').click(); // click the "Home" link
       cy.url().should('include', '/home'); // make sure the URL has changed to the home page URL
