@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit{
   userIds: string[] = [];
   user: string = '';
   dropDown: string = ''; 
-  friendsUserId: string[] =[];
+  friendsUserId: string[] = [];
   selectedFriend: string = '';
   selectedPlaylistF = '';
   semiMatchedSongs: Array<Song> = []; // make a get request to pull all of the semi matched songs to display to the user
@@ -181,10 +181,22 @@ export class LoginComponent implements OnInit{
   addFriend(name: string) {
     if (name) {
       this.friendsUserId.push(name);
+      this.addFriendToDatabase(name);
     }
-
     
+  }
 
+  addFriendToDatabase(name: string){
+    console.log(this.friendsUserId);
+    const url = 'http://localhost:8000/userPost';
+    
+    const friendData = {
+      "UserID": this.user,
+      "friends": this.friendsUserId
+    };
+    this.http.put(url, friendData).subscribe(response => {
+      console.log(response);
+    });
 
   }
 
@@ -213,7 +225,7 @@ export class LoginComponent implements OnInit{
 
 
 
-async getUserData() { // blend fucnitonality - currently just adds both selected playlists to 
+  async getUserData() { // blend fucnitonality - currently just adds both selected playlists to 
 
   
     this.spotifyService.createPlaylist('vibeShareTest2023',this.userIds, this.user).then(() => { // this.userIds nothing happens
@@ -295,8 +307,9 @@ getUser(): Observable<boolean> {
   return this.http.get(url).pipe(
     map((data: any) => {
       // Check if user ID exists
-      console.log(data);
-      this.friendsUserId = data.friends;
+      console.log(data.friends);
+      this.friendsUserId = [...this.friendsUserId, ...data.friends];
+      console.log(this.friendsUserId);
       return true;
     }),
     catchError((error: any) => {
@@ -308,7 +321,7 @@ getUser(): Observable<boolean> {
 
 
 
-handleAuth() { // gets acess token
+handleAuth() { // gets acess token and essentually logs in
   this.spotifyService.handleAuthorizationResponse().then(() => {
     
         this.spotifyService.getUserId()
@@ -318,8 +331,7 @@ handleAuth() { // gets acess token
               this.playlists = playlists;
               this.getUser().subscribe(userExists => {
                 if (userExists) {
-                  console.log('User exists');
-                  
+                  console.log('User exists');                               
                   // display user friends
                 } else {
                   console.log('User does not exist');
@@ -328,6 +340,7 @@ handleAuth() { // gets acess token
             });
           });
     });
+
   });
 }
 
@@ -336,6 +349,8 @@ redirectToSpotifyAPI(){
   this.spotifyService.authorize();
 
 }
+
+
 
 
 addPost(): void {
@@ -367,7 +382,7 @@ addUser(): void {
   const body = {
     Friends: this.friendsUserId, // just stores the friends name
     //LikedSong: ["song1", "song2", "song3"],
-    username: this.user,
+    UserID: this.user,
     //groupAdmin: { "BINGO": true, "GROUP2": false }
   };
   const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -385,15 +400,14 @@ addUser(): void {
 
   onSubmit() { // displays the songs and makes post request
 
-    this.addPost();
-    this.addUser();
-
 
     this.spotifyService.getRandomSongsFromRapCategory().subscribe(playlists => { // PRETTY CONFIDENT ABT THIS BUT NOT ANYTHING ELSE
       this.randomP = playlists;
-    });
+    
 
     const firstPlaylist = this.randomP[0];
+
+    
     console.log(firstPlaylist); //does not work during first try - works second try
     console.log(firstPlaylist.songs);
     
@@ -409,6 +423,7 @@ addUser(): void {
       console.error('No .playlist-container element was found in the DOM.');
       return;
     }
+    
     
 
     
@@ -491,6 +506,7 @@ addUser(): void {
     } else {
       console.error('this.randomActualSongs.songs is undefined');
     }
+  });
     
     
     }
@@ -500,4 +516,6 @@ addUser(): void {
   navigateToNewScreen() {
     this.router.navigate(['/home-screen']);
   }
+
+  
 }
