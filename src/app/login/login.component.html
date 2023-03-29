@@ -1,17 +1,20 @@
 <!-- login.component.html -->
 
 <div class="button-container">
-  <button (click)="redirectToSpotifyAPI()" id="redirect-button">Redirect to Spotify API</button>
-  <p id="TODO">TODO: Implement feedback system to show if spotify redirect was successful or not</p>
+  <button (click)="redirectToSpotifyAPI()" id="redirect-button">Link Spotify</button>
   <button (click)="handleAuth()" id="login-button">Login</button>
+  <p id="TODO">TODO: Implement feedback system to show if spotify redirect was successful or not</p>
 </div>
 
 
 <!-- what should be home.component.html -->
 
-<div *ngIf="user">
-  <h2>User Information</h2>
-  <p>ID: {{ user }}</p>
+<div class="welcome" *ngIf="user" >
+  <h2>Welcome, let's get blending...</h2>
+  <h3>Spotify Username </h3>
+  <h3>v</h3>
+  <h4>> {{ user }} <</h4>
+  <h3>^</h3>
 </div>
 
 
