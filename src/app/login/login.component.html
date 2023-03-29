@@ -36,28 +36,24 @@
 
 <button (click)="addFriend(nameInput.value)">Add Friend</button>
 
-<ul>
-  <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
-</ul>
-<select
-  [(ngModel)]="selectedFriend"
-  (ngModelChange)="onFriendSelected(selectedFriend)"
->
-  <option *ngFor="let friend of friendsUserId" [value]="friend">
-    {{ friend }}
-  </option>
-</select>
-<form>
-  <select
-    [(ngModel)]="selectedPlaylistF"
-    name="dropDown"
-    (ngModelChange)="onPlaylistSelected(selectedPlaylistF)"
-  >
-    <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
-      {{ playlist.name }}
-    </option>
-  </select>
-</form>
+  <ul>
+    <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
+  </ul>
+
+  <div class="friend-selector">
+    <select [(ngModel)]="selectedFriend" (ngModelChange)="onFriendSelected(selectedFriend)">
+      <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
+    </select>
+  </div>
+
+  <form>
+    <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
+      <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
+        {{ playlist.name }}
+      </option>
+    </select>
+  </form>
+
 
 <div class="button-container">
   <button (click)="getUserData()">Blend</button>
