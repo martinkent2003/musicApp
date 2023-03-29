@@ -1,17 +1,17 @@
 <!-- login.component.html -->
-<div *ngIf="user">
-  <h2>User Information</h2>
-  <p>ID: {{ user}}</p>
+
+<div class="button-container">
+  <button (click)="redirectToSpotifyAPI()" id="redirect-button">Redirect to Spotify API</button>
+  <p id="TODO">TODO: Implement feedback system to show if spotify redirect was successful or not</p>
+  <button (click)="handleAuth()" id="login-button">Login</button>
 </div>
 
 
+<!-- what should be home.component.html -->
 
-<div class="button-container">
-  <button (click)="redirectToSpotifyAPI()">Redirect to Spotify API</button>
-  <button (click)="handleAuth()">handle auth</button>
-  
-  <!-- Blend should only happen once because makes new playlist and merges two songs -->
-  
+<div *ngIf="user">
+  <h2>User Information</h2>
+  <p>ID: {{ user }}</p>
 </div>
 
 
@@ -28,45 +28,46 @@
     {{ song.name }}
   </li>
 </ul>
-<input #nameInput type="text" (keyup.enter)="addFriend(nameInput.value); nameInput.value=''">
+<input
+  #nameInput
+  type="text"
+  (keyup.enter)="addFriend(nameInput.value); nameInput.value = ''"
+/>
 
-  <button (click)="addFriend(nameInput.value)">Add Friend</button>
+<button (click)="addFriend(nameInput.value)">Add Friend</button>
 
-
-
-  <ul>
-    <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
-  </ul>
-  <select [(ngModel)]="selectedFriend" (ngModelChange)="onFriendSelected(selectedFriend)">
-    <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
+<ul>
+  <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
+</ul>
+<select
+  [(ngModel)]="selectedFriend"
+  (ngModelChange)="onFriendSelected(selectedFriend)"
+>
+  <option *ngFor="let friend of friendsUserId" [value]="friend">
+    {{ friend }}
+  </option>
+</select>
+<form>
+  <select
+    [(ngModel)]="selectedPlaylistF"
+    name="dropDown"
+    (ngModelChange)="onPlaylistSelected(selectedPlaylistF)"
+  >
+    <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
+      {{ playlist.name }}
+    </option>
   </select>
-  <form>
-    <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
-      <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
-        {{ playlist.name }}
-      </option>
-    </select>
-  </form>
-  
+</form>
 
 <div class="button-container">
-  <button (click)="getUserData()">Blend</button> 
+  <button (click)="getUserData()">Blend</button>
   <button (click)="onSubmit()">Display Songs</button>
 </div>
 
-<p *ngIf="selectedPlaylistF">Added Playlist: {{ selectedPlaylistF}}</p>
+<p *ngIf="selectedPlaylistF">Added Playlist: {{ selectedPlaylistF }}</p>
 
-<div class="song-card">
-
-</div>
+<div class="song-card"></div>
 
 
-
-
-
-
-
-
-
-
-  
+<!-- old comment: -->
+<!-- Blend should only happen once because makes new playlist and merges two songs -->
