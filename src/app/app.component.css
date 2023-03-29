@@ -1,0 +1,33 @@
+/* Set the background color of the body to a light gray */
+body {
+  background-color: #f0f0f0;
+}
+
+#logo-text {
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+  font-size: 32px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #ffffff;
+}
+
+/* Center the header and give it a background color and padding */
+h1 {
+  background: linear-gradient(to right, #1db954, #1d60c5);
+  text-align: center;
+  background-color: #1db954;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+/* Style the navigation menu with a horizontal layout */
+nav {
+  margin-top: 0%;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding: 0;
+  color: white;
+}
