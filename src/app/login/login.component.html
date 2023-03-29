@@ -9,9 +9,9 @@
 <div class="button-container">
   <button (click)="redirectToSpotifyAPI()">Redirect to Spotify API</button>
   <button (click)="handleAuth()">handle auth</button>
-
+  
   <!-- Blend should only happen once because makes new playlist and merges two songs -->
-
+  
 </div>
 
 
@@ -34,22 +34,23 @@
 
 
 
-<ul>
-  <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
-</ul>
-<select [(ngModel)]="selectedFriend" (ngModelChange)="onFriendSelected(selectedFriend)">
-  <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
-</select>
-<form>
-  <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
-    <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
-      {{ playlist.name }}
-    </option>
+  <ul>
+    <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
+  </ul>
+  <select [(ngModel)]="selectedFriend" (ngModelChange)="onFriendSelected(selectedFriend)">
+    <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
   </select>
-</form>
+  <form>
+    <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
+      <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
+        {{ playlist.name }}
+      </option>
+    </select>
+  </form>
+  
 
 <div class="button-container">
-  <button (click)="getUserData()">Blend</button>
+  <button (click)="getUserData()">Blend</button> 
   <button (click)="onSubmit()">Display Songs</button>
 </div>
 
@@ -58,3 +59,14 @@
 <div class="song-card">
 
 </div>
+
+
+
+
+
+
+
+
+
+
+  
