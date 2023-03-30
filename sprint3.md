@@ -18,12 +18,17 @@
 - Fix bugs with some buttons and continue styling 
 
 ## Backend work update:
-- 
+- Implemented delete method for users and groups which uses the ID to search for and delete certain documents from the database
+- Fixed duplicate users bug by checking for pre-existing user in database before allowing for the creation of new one
+- Implemented the put request for Users which allows frontend to change specific fields from a given user without modifying anything else
 ## Backend work to do:
+- Compute how songs in the group category will be updated based on the user's preferences, and by what metric it will changed from semi-matched to matched
 - 
 
 ## Unit Test:
 ### Frontend:
 - 
 ### Backend:
-- 
+- Same Unit test as previous sprint
+- Addition of unit tests for new DeleteUser and DeleteGroup which makes sure that the total number of users is one less than what it was after deleteing 
+- Addition of unit test for PutUser, which makes sure that the fields of a user are properly updated after a put request updating a user
