@@ -26,7 +26,8 @@
 
 ## Unit Test:
 ### Frontend:
-- 
+- For connecting the front and backend we integrated the put add and get requests for a user’s friends. So essentially a friend can be added, saved to the database, and when the user logs back in the users friends that were previously added are pulled using the get request. This proves that we have fully connected the front and backend. 
+- In terms of cypress testing we were able to test majority of the functionality such as adding friends, routing between different pages, clicking buttons that reroute to other pages - even third party pages. Some unit testing was impossible to do since it requires Spotify account authentication. Cypress testing does not allow third party DOM interaction. Overall we plan to further integrate backend functionality such as deleting a user and limiting friends added to those that exist in the database.
 ### Backend:
 - Same Unit test as previous sprint
 - Addition of unit tests for new DeleteUser and DeleteGroup which makes sure that the total number of users is one less than what it was after deleteing 
