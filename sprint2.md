@@ -1,6 +1,6 @@
 # Sprint 2
 
-### Date: 2022-03-01
+### Date: 2023-03-01
 
 ## Frontend
 - AddFriend Test: added a test to check if the addFriend function works 
