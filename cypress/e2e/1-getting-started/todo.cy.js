@@ -11,7 +11,7 @@ describe('Login Component', () => {
   
 
   it('should redirect to Spotify API', () => {
-    cy.get('button').contains('Redirect to Spotify API').click(); // click the Redirect to Spotify API button
+    cy.get('button').contains('Link Spotify').click(); // click the Redirect to Spotify API button
     //cy.url().should('eq', 'https://api.spotify.com/'); // make sure the URL has changed to the Spotify API URL
   });
 
