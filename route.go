@@ -123,6 +123,33 @@ func addUsers(resp http.ResponseWriter, req *http.Request) {
 		resp.Write([]byte(`{"error": "Error unmarshalling the users array"}`))
 		return
 	}
+	//gets all the current users to verify that any user being added to friends list is actually a user
+	users, err := userRepo.FindAll()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error gettings the users"}`))
+		return
+	}
+	friendsExist := true
+	// Check here to see if the friends are actually users.
+	for _, friendID := range user.Friends {
+		friendExists := false
+		for _, u := range users {
+			if u.UserID == friendID {
+				friendExists = true
+				break
+			}
+		}
+		if !friendExists {
+			friendsExist = false
+			break
+		}
+	}
+	if !friendsExist {
+		resp.WriteHeader(http.StatusBadRequest)
+		resp.Write([]byte(`{"error": "One or more friends do not exist"}`))
+		return
+	}
 	userRepo.Save(&user)
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(user)
@@ -140,6 +167,33 @@ func putUsers(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		resp.Write([]byte(`{"error": "Error unmarshalling the users array"}`))
+		return
+	}
+	//gets all the current users to verify that any user being added to friends list is actually a user
+	users, err := userRepo.FindAll()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error gettings the users"}`))
+		return
+	}
+	friendsExist := true
+	// Check here to see if the friends are actually users.
+	for _, friendID := range user.Friends {
+		friendExists := false
+		for _, u := range users {
+			if u.UserID == friendID {
+				friendExists = true
+				break
+			}
+		}
+		if !friendExists {
+			friendsExist = false
+			break
+		}
+	}
+	if !friendsExist {
+		resp.WriteHeader(http.StatusBadRequest)
+		resp.Write([]byte(`{"error": "One or more friends do not exist"}`))
 		return
 	}
 	userRepo.Update(&user)
