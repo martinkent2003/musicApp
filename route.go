@@ -208,8 +208,8 @@ If there is an error, it returns a 500 status code and an error message.
 */
 func putGroup(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
-	var group entity.Group
-	err := json.NewDecoder(req.Body).Decode(&group)
+	var group entity.Group // The JSON body should have 
+	err := json.NewDecoder(req.Body).Decode(&group) 
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		resp.Write([]byte(`{"error": "Error unmarshalling the groups array"}`))

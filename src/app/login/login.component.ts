@@ -58,6 +58,8 @@ export class LoginComponent implements OnInit{
   dropDown: string = ''; 
   friendsUserId: string[] = [];
   selectedFriend: string = '';
+  selectedFriendsForGroup: string[] = [];
+  groupOfFriends: string[]  = [];
   selectedPlaylistF = '';
   semiMatchedSongs: Array<Song> = []; // make a get request to pull all of the semi matched songs to display to the user
   matchedOwner: Array<Song> = [];// makes get request and allow user to add matched songs to the playlist
@@ -67,6 +69,7 @@ export class LoginComponent implements OnInit{
   playlistS: string = ''; // universal friend playlist that was selected
   myPlaylist: Playlist | undefined;
   arbAddSongs: Array<Song> = [];
+  createdPlaylistID: string | undefined;
 
 
   displaySong() { //displays a new song
@@ -178,26 +181,29 @@ export class LoginComponent implements OnInit{
 
   }
 
-  addFriend(name: string) {
+  
+ // CHNAGE NEEDS TO HAPPEND FROM HERE AND BELOW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+  addFriend(name: string) { // change this to only push if the add FriendToDatatbase is successful 
     if (name) {
-      this.friendsUserId.push(name);
+      this.friendsUserId.push(name); // switch this with the one below
       this.addFriendToDatabase(name);
     }
     
   }
 
-  addFriendToDatabase(name: string){
+
+  addFriendToDatabase(name: string){ 
     console.log(this.friendsUserId);
     const url = 'http://localhost:8000/userPost';
     
     const friendData = {
       "UserID": this.user,
-      "friends": this.friendsUserId
+      "friends": this.friendsUserId // change to singular name intead of this.friendsUserId
     };
     this.http.put(url, friendData).subscribe(response => {
       console.log(response);
     });
-
   }
 
 
@@ -213,17 +219,70 @@ export class LoginComponent implements OnInit{
       this.spotifyService.getPlaylists(friend).subscribe(playlists => {
       this.Fplaylists = playlists;
       this.selectedFriend = friend;
+    });    
+  }
 
-      
+  showGroupForm = false;
+  groupName = '';
+  //groupNameSubmitted = false;
+  groupMembers: string[] = [];
 
-    });
+  createNewGroup(): void {
+    this.showGroupForm = true;
+  }
 
-    
-    
+  // add a button that allows admin to display liked songs from the group schema that aren't in the createdPlaylistID for the admin screen
+  // this would be in the get groups by user id section of the screen - only the groups where the logged in user is the admin would have the above feature
+
+  submitGroupName(): void { 
+    this.showGroupForm = true;
+    const body = {
+      groupID: this.groupName,
+      //admin is the user who created the group - 
+      users: [this.user],
+      playlist: this.createdPlaylistID, // id of the blended playlist
+      //have the defualt liked songs be the blended playlist
+
+    };
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const options = { headers: headers };
+
+    this.http.post<Group>('http://localhost:8000/groupPost', body, options)
+      .subscribe(
+          (res) => console.log(res),
+          (err) => console.log(err)
+      );
+  }
+
+  addFriendToGroup() {
+    if (this.selectedFriend) {
+      this.groupMembers.push(this.selectedFriend);
+      this.selectedFriend = '';
+    }
   }
 
 
 
+  addFriendsToGroup(): void { // adds friends selected to group using a put request to database
+    // const body = {
+    //   groupID: this.user,
+    //   users: this.selectedFriendsForGroup
+    // };
+    // const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    // const options = { headers: headers };
+
+    // this.http.post<Group>('http://localhost:8000/groupPost', body, options)
+    //   .subscribe(
+    //       (res) => console.log(res),
+    //       (err) => console.log(err)
+    //   );
+  }
+
+
+   // CHNAGE NEEDS TO HAPPEND FROM HERE AND ABOVE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+  
 
   async getUserData() { // blend fucnitonality - currently just adds both selected playlists to 
 
@@ -233,6 +292,7 @@ export class LoginComponent implements OnInit{
     this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
     this.playlists = playlists;
     const selectedPlaylist = this.playlists.find(playlist => playlist.name === 'vibeShareTest2023');
+    this.createdPlaylistID = selectedPlaylist?.id;
     this.myPlaylist = selectedPlaylist;
     console.log(selectedPlaylist?.name); // does not work here
     const blendP =  this.Fplaylists.find(playlist => playlist.name === this.playlistS);
@@ -352,30 +412,6 @@ redirectToSpotifyAPI(){
 
 
 
-
-addPost(): void {
-  const body = {
-    groupID: "DOCTOR",
-    users: this.userIds
-  };
-  const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-  const options = { headers: headers };
-
-  this.http.post<Group>('http://localhost:8000/groupPost', body, options)
-    .subscribe(
-        (res) => console.log(res),
-        (err) => console.log(err)
-    );
-}
-
-
-// type User struct {
-// 	Friends    []string        `json:"friends"`
-// 	LikedSong  []string        `json:"likedSong"`
-// 	UserID     string          `json:"userID"`
-// 	GroupAdmin map[string]bool `json:"groupAdmin"` // key is group id, admin status
-// }
-
 addUser(): void {
   console.log('RAN POST');
 
@@ -394,7 +430,6 @@ addUser(): void {
         (err) => console.log(err)
     );
 }
-
 
 
 
