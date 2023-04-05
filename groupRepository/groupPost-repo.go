@@ -221,7 +221,6 @@ func convertToStringSlice(slice interface{}) ([]string, error) {
 		if !ok {
 			return nil, fmt.Errorf("element %d is not a string", i)
 		}
-
 		sSlice[i] = s
 	}
 	return sSlice, nil

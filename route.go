@@ -356,3 +356,65 @@ func deleteGroup(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode("Group deleted successfully")
 }
+
+func updateUserFriends(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	var user entity.User
+	err := json.NewDecoder(req.Body).Decode(&user)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error unmarshalling the groups array"}`))
+		return
+	}
+
+	users, err := userRepo.FindAll()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error gettings the users"}`))
+		return
+	}
+
+	// Check here to see if the members are actually users.
+	membersExist := true
+	for _, memberID := range user.Friends {
+		memberExists := false
+		for _, u := range users {
+			if u.UserID == memberID {
+				memberExists = true
+				break
+			}
+		}
+		if !memberExists {
+			membersExist = false
+			break
+		}
+	}
+	if !membersExist {
+		resp.WriteHeader(http.StatusBadRequest)
+		resp.Write([]byte(`{"error": "One or more members do not exist"}`))
+		return
+	}
+
+	//gets the group from the database
+	userFromDB, err := userRepo.FindUser(user.UserID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error getting the group"}`))
+		return
+	}
+
+	//adds the new users to the group
+	for _, friend := range userFromDB.Friends {
+		//log.Printf("User: %s", user)
+		user.Friends = append(user.Friends, friend)
+	}
+
+	//log.Printf("Group: %s", group)
+
+	//removes any duplicates
+	user.Friends = removeDuplicates(user.Friends)
+
+	userRepo.Update(&user)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(user)
+}
