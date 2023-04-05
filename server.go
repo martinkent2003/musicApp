@@ -24,6 +24,7 @@ func main() {
 	router.HandleFunc("/groupPost/{groupID}", getGroup).Methods("GET")
 	router.HandleFunc("/groupPost/{groupID}", deleteGroup).Methods("DELETE")
 	router.HandleFunc("/groupPost/{groupID}", putGroup).Methods("PUT")
+	router.HandleFunc("/groupUpdateUsers/{groupID}", updateGroupUsers).Methods("PUT")
 	router.HandleFunc("/userPost", addUsers).Methods("POST")
 	router.HandleFunc("/userPost", putUsers).Methods("PUT")
 
