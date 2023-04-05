@@ -201,6 +201,54 @@ func putUsers(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(user)
 }
 
+/*
+the PutGroups function updates a pre-existing group to the groupRepo.
+It uses the Update method in the GroupRepository interface to save the group to the Firestore database.
+If there is an error, it returns a 500 status code and an error message.
+*/
+func putGroup(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	var group entity.Group
+	err := json.NewDecoder(req.Body).Decode(&group)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error unmarshalling the groups array"}`))
+		return
+	}
+
+	//gets all the current users to verify that any user being added to friends list is actually a user
+	users, err := userRepo.FindAll()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error gettings the users"}`))
+		return
+	}
+
+	// Check here to see if the members are actually users.
+	membersExist := true
+	for _, memberID := range group.Users {
+		memberExists := false
+		for _, u := range users {
+			if u.UserID == memberID {
+				memberExists = true
+				break
+			}
+		}
+		if !memberExists {
+			membersExist = false
+			break
+		}
+	}
+	if !membersExist {
+		resp.WriteHeader(http.StatusBadRequest)
+		resp.Write([]byte(`{"error": "One or more members do not exist"}`))
+		return
+	}
+	groupRepo.Update(&group)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(group)
+}
+
 func deleteUser(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	vars := mux.Vars(req)
