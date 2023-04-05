@@ -23,6 +23,7 @@ type GroupRepository interface {
 	FindAll() ([]entity.Group, error)
 	FindGroup(id string) (*entity.Group, error)
 	DeleteGroup(groupID string) error
+	Update(group *entity.Group) (*entity.Group, error)
 }
 
 type groupRepo struct{}
@@ -156,6 +157,53 @@ func (*groupRepo) DeleteGroup(groupID string) error {
 	}
 
 	return nil
+}
+
+func (*groupRepo) Update(group *entity.Group) (*entity.Group, error) {
+	ctx := context.Background()
+	client, err := firestore.NewClient(ctx, projectId)
+	if err != nil {
+		log.Fatalf("Failed to create a Firestore Client: %v", err)
+		return nil, err
+	}
+	defer client.Close()
+
+	q := client.Collection("groups").Where("GroupID", "==", group.GroupID)
+	snap, err := q.Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	if len(snap) == 0 {
+		return nil, errors.New("group not found")
+	}
+
+	updateGroupFields := make(map[string]interface{})
+
+	if group.PlaylistID != "" {
+		updateGroupFields["PlaylistID"] = group.PlaylistID
+	}
+
+	if group.SemiMatched != nil {
+		updateGroupFields["SemiMatched"] = group.SemiMatched
+	}
+
+	if group.Matched != nil {
+		updateGroupFields["Matched"] = group.Matched
+	}
+
+	if group.Users != nil {
+		updateGroupFields["Users"] = group.Users
+	}
+
+	_, err = client.Collection("groups").Doc(snap[0].Ref.ID).Set(ctx, updateGroupFields, firestore.MergeAll)
+
+	if err != nil {
+		log.Fatalf("Failed to update group: %v", err)
+		return nil, err
+	}
+
+	return group, nil
 }
 
 // convertToStringSlice converts an interface{} to a []string slice

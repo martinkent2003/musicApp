@@ -90,12 +90,14 @@ func (*userRepo) Update(user *entity.User) (*entity.User, error) {
 	updateFields := make(map[string]interface{})
 
 	// Update only the fields provided in the user entity
+
 	if user.Friends != nil {
 		updateFields["Friends"] = user.Friends
 	}
 	if user.LikedSong != nil {
 		updateFields["LikedSong"] = user.LikedSong
 	}
+
 	if user.GroupAdmin != nil {
 		updateFields["GroupAdmin"] = user.GroupAdmin
 	}
