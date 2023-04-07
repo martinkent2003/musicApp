@@ -240,7 +240,7 @@ export class LoginComponent implements OnInit{
       groupID: this.groupName,
       //admin is the user who created the group - 
       users: [this.user],
-      playlist: this.createdPlaylistID, // id of the blended playlist
+      playlist: this.createdPlaylistID, // name of the blended playlist from user input
       //have the defualt liked songs be the blended playlist
 
     };
