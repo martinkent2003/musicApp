@@ -57,6 +57,7 @@ func (*userRepo) Save(user *entity.User) (*entity.User, error) {
 		"LikedSong":  user.LikedSong,
 		"GroupAdmin": user.GroupAdmin,
 		"UserID":     user.UserID,
+		"Groups":     user.Groups,
 	})
 
 	if err != nil {
@@ -100,6 +101,9 @@ func (*userRepo) Update(user *entity.User) (*entity.User, error) {
 
 	if user.GroupAdmin != nil {
 		updateFields["GroupAdmin"] = user.GroupAdmin
+	}
+	if user.Groups != nil {
+		updateFields["Groups"] = user.Groups
 	}
 
 	// Update the user document with the provided fields
@@ -162,11 +166,14 @@ func (*userRepo) FindAll() ([]entity.User, error) {
 		friends, _ := convertToStringSlice(doc.Data()["Friends"])
 		likedSongs, _ := convertToStringSlice(doc.Data()["LikedSong"])
 		groupAdmin, _ := convertToMap(doc.Data()["GroupAdmin"])
+		groups, _ := convertToStringSlice(doc.Data()["Groups"])
+
 		user := entity.User{
 			Friends:    friends,
 			LikedSong:  likedSongs,
 			GroupAdmin: groupAdmin,
 			UserID:     doc.Data()["UserID"].(string),
+			Groups:     groups,
 		}
 		users = append(users, user)
 	}

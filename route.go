@@ -206,10 +206,11 @@ the PutGroups function updates a pre-existing group to the groupRepo.
 It uses the Update method in the GroupRepository interface to save the group to the Firestore database.
 If there is an error, it returns a 500 status code and an error message.
 */
+
 func putGroup(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
-	var group entity.Group // The JSON body should have 
-	err := json.NewDecoder(req.Body).Decode(&group) 
+	var group entity.Group // The JSON body should have
+	err := json.NewDecoder(req.Body).Decode(&group)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		resp.Write([]byte(`{"error": "Error unmarshalling the groups array"}`))
@@ -247,6 +248,32 @@ func putGroup(resp http.ResponseWriter, req *http.Request) {
 	groupRepo.Update(&group)
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(group)
+}
+
+func updatePlaylistName(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	var group entity.Group
+	err := json.NewDecoder(req.Body).Decode(&group)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error unmarshalling the groups array"}`))
+		return
+	}
+	groupFromRepo, err := groupRepo.FindGroup(group.GroupID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error getting the group"}`))
+		return
+	}
+
+	group.Matched = groupFromRepo.Matched
+	group.SemiMatched = groupFromRepo.SemiMatched
+	group.Users = groupFromRepo.Users
+
+	groupRepo.Update(&group)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(groupFromRepo)
+
 }
 
 func updateGroupUsers(resp http.ResponseWriter, req *http.Request) {
@@ -357,7 +384,7 @@ func deleteGroup(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode("Group deleted successfully")
 }
 
-func updateUserFriends(resp http.ResponseWriter, req *http.Request) {
+func updateUserGroups(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var user entity.User
 	err := json.NewDecoder(req.Body).Decode(&user)
@@ -367,10 +394,47 @@ func updateUserFriends(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	userFromDB, err := userRepo.FindUser(user.UserID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error getting the user"}`))
+		return
+	}
+
+	//adds the new groups to the user
+
+	for _, group := range userFromDB.Groups {
+		user.Groups = append(user.Groups, group)
+	}
+
+	user.Groups = removeDuplicates(user.Groups)
+
+	//user.Groups = removeDuplicates(user.Groups)
+
+	// keep old user data for fields not being updated
+	user.Friends = userFromDB.Friends
+	user.LikedSong = userFromDB.LikedSong
+	user.GroupAdmin = userFromDB.GroupAdmin
+
+	userRepo.Update(&user)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(user)
+}
+
+func updateUserFriends(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	var user entity.User
+	err := json.NewDecoder(req.Body).Decode(&user)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error unmarshalling the friends array"}`))
+		return
+	}
+
 	users, err := userRepo.FindAll()
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error gettings the users"}`))
+		resp.Write([]byte(`{"error": "Error getting the users"}`))
 		return
 	}
 
@@ -395,24 +459,25 @@ func updateUserFriends(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	//gets the group from the database
 	userFromDB, err := userRepo.FindUser(user.UserID)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error getting the group"}`))
+		resp.Write([]byte(`{"error": "Error getting the user"}`))
 		return
 	}
 
-	//adds the new users to the group
+	//adds the new friends to the user
 	for _, friend := range userFromDB.Friends {
-		//log.Printf("User: %s", user)
 		user.Friends = append(user.Friends, friend)
 	}
 
-	//log.Printf("Group: %s", group)
-
 	//removes any duplicates
 	user.Friends = removeDuplicates(user.Friends)
+
+	// keep old user data for fields not being updated
+	user.LikedSong = userFromDB.LikedSong
+	user.GroupAdmin = userFromDB.GroupAdmin
+	user.Groups = userFromDB.Groups
 
 	userRepo.Update(&user)
 	resp.WriteHeader(http.StatusOK)

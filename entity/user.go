@@ -7,4 +7,5 @@ type User struct {
 	LikedSong  []string        `json:"likedSong"`
 	UserID     string          `json:"userID"`
 	GroupAdmin map[string]bool `json:"groupAdmin"`
+	Groups     []string        `json:"groups"`
 }
