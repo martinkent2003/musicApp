@@ -28,6 +28,8 @@ func main() {
 	router.HandleFunc("/userPost", addUsers).Methods("POST")
 	router.HandleFunc("/userPost", putUsers).Methods("PUT")
 	router.HandleFunc("/userUpdateFriends/", updateUserFriends).Methods("PUT")
+	router.HandleFunc("/userUpdateGroups/", updateUserGroups).Methods("PUT")
+	router.HandleFunc("/userUpdatePlaylists/", updatePlaylistName).Methods("PUT")
 
 	router.HandleFunc("/userPost/{userID}", getUser).Methods("GET")
 	router.HandleFunc("/userPost", getUsers).Methods("GET")

@@ -17,59 +17,32 @@
   <h3>^</h3>
 </div>
 
-
-<form>
-  <select [(ngModel)]="dropDown" name="dropDown">
-    <option *ngFor="let playlist of playlists" [value]="playlist.name">
-      {{ playlist.name }}
-    </option>
-  </select>
-</form>
-
-<ul>
-  <li *ngFor="let song of songs">
-    {{ song.name }}
-  </li>
-</ul>
 <input
-  #nameInput
-  type="text"
-  (keyup.enter)="addFriend(nameInput.value); nameInput.value = ''"
+#nameInput
+type="text"
+(keyup.enter)="addFriend(nameInput.value); nameInput.value = ''"
 />
 
 <button (click)="addFriend(nameInput.value)">Add Friend</button>
 
-  <ul>
-    <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
-  </ul>
+<ul>
+  <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
+</ul>
 
-  <div class="friend-selector">
-    <select [(ngModel)]="selectedFriend" (ngModelChange)="onFriendSelected(selectedFriend)">
-      <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
-    </select>
-  </div>
-
-  <form>
-    <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
-      <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
-        {{ playlist.name }}
-      </option>
-    </select>
-  </form>
-
-
-  <div class="button-container">
-    <button (click)="getUserData()">Blend</button>
-  </div>
   
   <div>
     <button (click)="createNewGroup()">Create a Group</button>
   </div>
   
-  <div *ngIf="showGroupForm">
+  <div class="group-form" div *ngIf="showGroupForm">
     <div>
       <input type="text" [(ngModel)]="groupName" placeholder="Group Name"/>
       <button (click)="submitGroupName()">Submit Name</button>
+    </div>
+
+    <div>
+      <input type="text" [(ngModel)]="playlistName" placeholder="Playlist Name"/>
+      <button (click)="submitPlaylistName()">Submit Playlist Name</button>
     </div>
   
     <div>
@@ -85,14 +58,45 @@
     <ul>
       <li *ngFor="let member of groupMembers">{{ member }}</li>
     </ul>
+
+    <form>
+      <select [(ngModel)]="dropDown" name="dropDown">
+        <option *ngFor="let playlist of playlists" [value]="playlist.name">
+          {{ playlist.name }}
+        </option>
+      </select>
+    </form>
+    
+    <ul>
+      <li *ngFor="let song of songs">
+        {{ song.name }}
+      </li>
+    </ul>
+   
+    
+      <div class="friend-selector">
+        <select [(ngModel)]="selectedFriend" (ngModelChange)="onFriendSelected(selectedFriend)">
+          <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
+        </select>
+      </div>
+    
+      <form>
+        <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
+          <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
+            {{ playlist.name }}
+          </option>
+        </select>
+      </form>
+    
+    
+      <div class="Blend-container">
+        <button (click)="getUserData()">Blend</button>
+      </div>
   
-    <button (click)="addFriendsToGroup()">Create Group</button>
+
   </div>
+
   
-  
-
-
-
 
 <button (click)="onSubmit()">Display Songs</button>
 

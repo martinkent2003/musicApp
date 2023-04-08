@@ -16,6 +16,11 @@ interface Group {
   users: string[];
 }
 
+interface FriendResponse {
+  friends: string[]; // or any other type that matches the expected type of the friends array
+  // any other properties you expect to receive in the response
+}
+
 interface User {
   Friends:    string[];       
 	LikedSong: string[];     
@@ -70,6 +75,8 @@ export class LoginComponent implements OnInit{
   myPlaylist: Playlist | undefined;
   arbAddSongs: Array<Song> = [];
   createdPlaylistID: string | undefined;
+  playlistName: string = '';
+//nameInput: any;
 
 
   displaySong() { //displays a new song
@@ -162,16 +169,6 @@ export class LoginComponent implements OnInit{
   }
   
   
-
-  
-  
-
-  
-
-
-
-
-  
   constructor(private router: Router, private http: HttpClient,private spotifyService: SpotifyService){
   }
 
@@ -182,29 +179,38 @@ export class LoginComponent implements OnInit{
   }
 
   
+
+  
  // CHNAGE NEEDS TO HAPPEND FROM HERE AND BELOW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   addFriend(name: string) { // change this to only push if the add FriendToDatatbase is successful 
     if (name) {
-      this.friendsUserId.push(name); // switch this with the one below
+      //this.friendsUserId.push(name); // switch this with the one below
       this.addFriendToDatabase(name);
     }
     
   }
 
 
+  
   addFriendToDatabase(name: string){ 
     console.log(this.friendsUserId);
-    const url = 'http://localhost:8000/userPost';
+    const url = 'http://localhost:8000/userUpdateFriends/';
     
     const friendData = {
-      "UserID": this.user,
-      "friends": this.friendsUserId // change to singular name intead of this.friendsUserId
+      "userID": this.user,
+      "friends": [name]  // change to singular name intead of this.friendsUserId
     };
-    this.http.put(url, friendData).subscribe(response => {
+
+    
+  
+    this.http.put<FriendResponse>(url, friendData).subscribe(response => {
       console.log(response);
+      const friendsArray = response.friends; // extract the friends array from the response
+      this.friendsUserId = friendsArray; // assign the extracted friends array to this.friendsUserId
     });
   }
+  
 
 
 
@@ -234,6 +240,7 @@ export class LoginComponent implements OnInit{
   // add a button that allows admin to display liked songs from the group schema that aren't in the createdPlaylistID for the admin screen
   // this would be in the get groups by user id section of the screen - only the groups where the logged in user is the admin would have the above feature
 
+
   submitGroupName(): void { 
     this.showGroupForm = true;
     const body = {
@@ -242,8 +249,9 @@ export class LoginComponent implements OnInit{
       users: [this.user],
       playlist: this.createdPlaylistID, // name of the blended playlist from user input
       //have the defualt liked songs be the blended playlist
-
     };
+    
+    
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const options = { headers: headers };
 
@@ -252,20 +260,66 @@ export class LoginComponent implements OnInit{
           (res) => console.log(res),
           (err) => console.log(err)
       );
+
+      const friendData = {
+        "userID": this.user,
+        "groups": [this.groupName]  // change to singular name intead of this.friendsUserId
+      };
+
+    this.http.put<Group>('http://localhost:8000/userUpdateGroups/', friendData, options)
+      .subscribe(
+          (res) => console.log(res),
+          (err) => console.log(err)
+      );
   }
+
+  submitPlaylistName(): void {
+    console.log(this.playlistName);
+    const url = `http://localhost:8000/userUpdatePlaylists/`;
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    const options = { headers: headers };
+
+    const GpData = {
+      "groupID": this.groupName,
+      "playlistID": this.playlistName  // change to singular name intead of this.friendsUserId
+    };
+    
+    this.http.put<Group>(url, GpData, options)
+      .subscribe(
+        (res) => console.log(res),
+        (err) => console.log(err)
+      );
+  }
+
 
   addFriendToGroup() {
     if (this.selectedFriend) {
-      this.groupMembers.push(this.selectedFriend);
-      this.selectedFriend = '';
+      this.groupMembers.push(this.selectedFriend); // I think this is pointless
     }
+
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const options = { headers: headers };
+
+
+    console.log (this.selectedFriend);
+    const friendData = {
+      "groupID": this.groupName,
+      "users": [this.selectedFriend]  // change to singular name intead of this.friendsUserId
+    };
+
+  this.http.put<Group>('http://localhost:8000/groupUpdateUsers/', friendData, options)
+    .subscribe(
+        (res) => console.log(res),
+        (err) => console.log(err)
+    );
+    
   }
 
 
 
   addFriendsToGroup(): void { // adds friends selected to group using a put request to database
     // const body = {
-    //   groupID: this.user,
+    //   groupID: this.,
     //   users: this.selectedFriendsForGroup
     // };
     // const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -287,11 +341,10 @@ export class LoginComponent implements OnInit{
   async getUserData() { // blend fucnitonality - currently just adds both selected playlists to 
 
   
-    this.spotifyService.createPlaylist('vibeShareTest2023',this.userIds, this.user).then(() => { // this.userIds nothing happens
-
+    this.spotifyService.createPlaylist(this.playlistName,this.userIds, this.user).then(() => { // this.userIds nothing happens
     this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
     this.playlists = playlists;
-    const selectedPlaylist = this.playlists.find(playlist => playlist.name === 'vibeShareTest2023');
+    const selectedPlaylist = this.playlists.find(playlist => playlist.name === this.playlistName);
     this.createdPlaylistID = selectedPlaylist?.id;
     this.myPlaylist = selectedPlaylist;
     console.log(selectedPlaylist?.name); // does not work here
@@ -299,7 +352,7 @@ export class LoginComponent implements OnInit{
     if (blendP) {     
       //console.log(blendP.name);
     }
-    
+
     if (selectedPlaylist && blendP) {
         
         console.log(blendP.name); // works
@@ -331,7 +384,7 @@ export class LoginComponent implements OnInit{
     this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
       this.playlists = playlists;
       console.log(this.playlists);
-      const selectedPlaylist = this.playlists.find(playlist => playlist.name === 'vibeShareTest2023');
+      const selectedPlaylist = this.playlists.find(playlist => playlist.name === this.playlistName);
       this.myPlaylist = selectedPlaylist;
       console.log(this.dropDown);
       const blendP =  this.playlists.find(playlist => playlist.name === this.dropDown);
