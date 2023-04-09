@@ -17,6 +17,15 @@
   <h3>^</h3>
 </div>
 
+
+<div class="group-list" *ngIf="showGroupList">
+  <ul>
+    <li *ngFor="let group of allOfMyGroups">
+      {{ group.groupID }} - {{ group.users.join(', ') }} - {{ group.playlistID }}
+    </li>
+  </ul>
+</div>
+
 <input
 #nameInput
 type="text"
@@ -96,8 +105,21 @@ type="text"
 
   </div>
 
+
+  <label for="groupSelector">Choose a group:</label>
+<select id="groupSelector" [(ngModel)]="selectedGroupID" (change)="onSelect(selectedGroupID)">
+  <option *ngFor="let group of allOfMyGroups" [value]="group.groupID">
+    {{ group.groupID }} - {{ group.playlistID }}
+  </option>
+</select>
+<p *ngIf="selectedGroup">Selected Group: {{ selectedGroup.groupID }} - {{ selectedGroup.playlistID }}</p>
+<p *ngIf="selectedGroup">Selected PlaylistID: {{ selectedPlaylistID }}</p>
+
+
+
   
 
+  
 <button (click)="onSubmit()">Display Songs</button>
 
 
