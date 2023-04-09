@@ -5,6 +5,8 @@ import { HttpClient, HttpHeaders} from '@angular/common/http';
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { SpotifyService } from 'src/spotifyservice';
 import { from } from 'rxjs';
+import { all } from 'axios';
+import { group } from '@angular/animations';
 interface Playlist {
   id: string;
   name: string;
@@ -14,6 +16,8 @@ interface Playlist {
 interface Group {
   groupID: string;
   users: string[];
+  playlistID: string;
+  matched: string[];
 }
 
 interface FriendResponse {
@@ -26,6 +30,7 @@ interface User {
 	LikedSong: string[];     
 	UserID:     string;         
   groupAdmin: Record<string, boolean>;
+  Groups: Group[];
   
 }
 
@@ -76,7 +81,163 @@ export class LoginComponent implements OnInit{
   arbAddSongs: Array<Song> = [];
   createdPlaylistID: string | undefined;
   playlistName: string = '';
+  allOfMyGroups: Group[] = [];
+  allOfMyGroupNames: string[] = [];
+  showGroupList: boolean = false;
+  songIDs: string[] = [];
+  selectedGroupPlaylist: Playlist | undefined;
+
+
 //nameInput: any;
+  
+  selectedGroupID!: string;
+  selectedGroup: Group | undefined;
+  selectedPlaylistID: string | undefined;
+
+  // async onSelect(groupID: string): Promise<void> {
+  //   this.selectedGroup = this.allOfMyGroups.find(group => group.groupID === groupID);
+  //   this.selectedPlaylistID = groupID;
+  //   console.log(groupID);
+  
+    // this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
+    //   this.playlists = playlists;
+    //   this.selectedGroupPlaylist = this.playlists.find(playlist => playlist.name === this.selectedPlaylistID);
+    // });
+  
+     //this.selectedGroupPlaylist = this.playlists!.find(playlist => playlist.name === this.selectedPlaylistID);
+  
+  //   this.randomP = await this.spotifyService.getRandomSongsFromRapCategory().toPromise();
+  //   const firstPlaylist = this.randomP[0];
+  //   console.log(firstPlaylist);
+  //   console.log(firstPlaylist.songs);
+  
+  //   const playlistContainer = document.querySelector('.song-card');
+  //   this.randomActualSongs = this.randomP[0];
+  
+  //   console.log(this.randomActualSongs.songs);
+
+  async onSelect(groupID: string): Promise<void> {
+    this.selectedGroup = this.allOfMyGroups.find(group => group.groupID === groupID);
+    this.selectedPlaylistID = groupID;
+    console.log(groupID);
+  
+    this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
+      this.playlists = playlists;
+      this.selectedGroupPlaylist = this.playlists.find(playlist => playlist.name === this.selectedPlaylistID);
+    });
+
+    // Use the non-null assertion operator to ensure that `this.playlists` is not undefined
+    this.selectedGroupPlaylist = this.playlists!.find(playlist => playlist.name === this.selectedPlaylistID);
+
+    this.spotifyService.getRandomSongsFromRapCategory().subscribe(playlists => { // PRETTY CONFIDENT ABT THIS BUT NOT ANYTHING ELSE
+      this.randomP = playlists;
+    
+
+    const firstPlaylist = this.randomP[0];
+
+    console.log(firstPlaylist); //does not work during first try - works second try
+    console.log(firstPlaylist.songs);
+    
+
+    const playlistContainer = document.querySelector('.song-card')
+    this.randomActualSongs = this.randomP[0]; // something wrong here
+
+    console.log(this.randomActualSongs.songs); //does not work at all 
+
+    //ERROR HERE:  this.randomP does not update immdietly for use afterwards. this.randomActual songs also does not update immdietly for use afterwards. please fix this code
+
+    if (!playlistContainer) {
+      console.error('No .playlist-container element was found in the DOM.');
+      return;
+    }
+    
+    
+    if (this.randomActualSongs?.songs) {
+      
+      const song = this.randomActualSongs.songs[this.myNumber];
+      if (song) {
+        const songContainer = document.createElement('div');
+        songContainer.classList.add('song-container');
+        
+        const songImage = document.createElement('img');
+        songImage.src = song.imageUrl;
+        
+        const audioPlayer = document.createElement('audio');
+        audioPlayer.controls = true;
+        audioPlayer.src = song.audioUrl;
+        audioPlayer.style.position = 'absolute'; 
+        audioPlayer.style.left = '820px';
+        audioPlayer.style.top = '280px';
+        
+    
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.style.position = 'relative';
+        buttonsContainer.style.display = 'flex';
+        buttonsContainer.style.flexDirection = 'column';
+        buttonsContainer.classList.add('buttons-container');
+    
+        const likeButton = document.createElement('button');
+        likeButton.innerText = 'Like';
+        likeButton.style.position = 'absolute';
+        likeButton.style.bottom = '0';
+        likeButton.style.right = '0';
+        
+        likeButton.addEventListener('click', () => {
+          
+          this.arbAddSongs[0] = song;
+          const songsA = {
+            uris: this.arbAddSongs.map(song => `spotify:track:${song.id}`)
+          };
+          if(this.selectedGroupPlaylist){
+              this.spotifyService.addSongs(this.user,this.selectedGroupPlaylist.id,songsA).subscribe(response => {
+          });
+
+          }
+          if (this.randomActualSongs?.songs) {
+            // Increment myNumber to get the next song
+            this.myNumber = (this.myNumber + 1) % this.randomActualSongs?.songs.length;
+            // Remove the current song container
+            songContainer.remove();
+            // Display the next song
+            this.displaySong();
+          }
+        });
+    
+        const dislikeButton = document.createElement('button');
+        dislikeButton.innerText = 'Dislike';
+        dislikeButton.style.position = 'absolute';
+        dislikeButton.style.bottom = '0';
+        dislikeButton.style.left = '0';
+        dislikeButton.addEventListener('click', () => {
+          if (this.randomActualSongs?.songs) {
+            // Increment myNumber to get the next song
+            this.myNumber = (this.myNumber + 1) % this.randomActualSongs.songs.length;
+            // Remove the current song container
+            songContainer.remove();
+            // Display the next song
+            this.displaySong();
+          }
+        });
+    
+        buttonsContainer.appendChild(likeButton);
+        buttonsContainer.appendChild(dislikeButton);
+    
+        songContainer.appendChild(audioPlayer);
+        songContainer.appendChild(songImage);
+        //songContainer.appendChild(audioPlayer);
+        songContainer.appendChild(buttonsContainer);
+    
+        playlistContainer.appendChild(songContainer);
+      }
+    } else {
+      console.error('this.randomActualSongs.songs is undefined');
+    }
+  });
+    
+    
+  }
+
+  
 
 
   displaySong() { //displays a new song
@@ -114,17 +275,23 @@ export class LoginComponent implements OnInit{
       likeButton.style.position = 'absolute'; // Position the like button absolute to the button container
       likeButton.style.bottom = '0'; // Position the like button at the bottom of the button container
       likeButton.style.right = '0'; // Position the like button at the right of the button container
+
+      console.log("THIS SHOULD RUN", this.selectedGroupPlaylist);
+
       likeButton.addEventListener('click', () => {
+        console.log("LIKE BUTTON CLICKED");
 
         this.arbAddSongs[0] = song;
         const songsA = {
           uris: this.arbAddSongs.map(song => `spotify:track:${song.id}`)
         };
+        console.log("THE SONGSSS", songsA);
         
+        console.log(this.selectedGroupPlaylist);
         
-        if(this.myPlaylist){
-          this.spotifyService.addSongs(this.user,this.myPlaylist.id,songsA).subscribe(response => {
-            });
+        if(this.selectedGroupPlaylist){
+          this.spotifyService.addSongs(this.user,this.selectedGroupPlaylist.id,songsA).subscribe(response => {
+          });
 
         }
 
@@ -173,9 +340,11 @@ export class LoginComponent implements OnInit{
   }
 
 
-  ngOnInit() {
-    
 
+
+  ngOnInit() {
+
+  
   }
 
   
@@ -190,6 +359,8 @@ export class LoginComponent implements OnInit{
     }
     
   }
+
+
 
 
   
@@ -307,6 +478,18 @@ export class LoginComponent implements OnInit{
       "users": [this.selectedFriend]  // change to singular name intead of this.friendsUserId
     };
 
+    const grpData = {
+      "userID": this.selectedFriend,
+      "groups": [this.groupName]  // change to singular name intead of this.friendsUserId
+    };
+
+  this.http.put<Group>('http://localhost:8000/userUpdateGroups/', grpData, options) // adds groups to friends group list
+    .subscribe(
+        (res) => console.log(res),
+        (err) => console.log(err)
+    );
+
+
   this.http.put<Group>('http://localhost:8000/groupUpdateUsers/', friendData, options)
     .subscribe(
         (res) => console.log(res),
@@ -336,39 +519,37 @@ export class LoginComponent implements OnInit{
    // CHNAGE NEEDS TO HAPPEND FROM HERE AND ABOVE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-  
 
-  async getUserData() { // blend fucnitonality - currently just adds both selected playlists to 
 
   
-    this.spotifyService.createPlaylist(this.playlistName,this.userIds, this.user).then(() => { // this.userIds nothing happens
-    this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
+
+  async getUserData() { // ADD ALL OF THE SONGS ADDED TO PLAYLIST TO THE MATCHED SONGS ARRAY - done
+
+  
+    this.spotifyService.createPlaylist(this.playlistName,this.userIds, this.user).then(() => { 
+
+    this.spotifyService.getPlaylists(this.user).subscribe(playlists => { 
     this.playlists = playlists;
     const selectedPlaylist = this.playlists.find(playlist => playlist.name === this.playlistName);
     this.createdPlaylistID = selectedPlaylist?.id;
     this.myPlaylist = selectedPlaylist;
-    console.log(selectedPlaylist?.name); // does not work here
     const blendP =  this.Fplaylists.find(playlist => playlist.name === this.playlistS);
     if (blendP) {     
       //console.log(blendP.name);
     }
 
     if (selectedPlaylist && blendP) {
-        
-        console.log(blendP.name); // works
         this.selectedPlaylistId = selectedPlaylist.id;
-        //console.log(this.selectedPlaylistId);
-        //this.blendPID = blendP.id;
         this.spotifyService.getSongs(this.selectedFriend, blendP.id).subscribe(allSongs => {
-        //const playlista: Playlist = this.Fplaylists.find(p => p.id === this.blendPID) as Playlist; // NOT PROPERLY MAPPING SONGS BUT FINDS IT
-        //console.log(playlista.name); // FAILS HERE IN FRIEND SIDE
-        console.log('WORKED');
-
       if (blendP && allSongs) { // DOES NOT WORK HERE
-         console.log('PLAYLIST A IS READDD');
           const songs = {
             uris: allSongs.map(song => `spotify:track:${song.id}`)
           };
+          this.songIDs = this.songIDs.concat(allSongs.map(song => song.id));
+
+
+          // PUT REQUEST HERE
+        
           this.spotifyService.addSongs(this.selectedFriend, this.selectedPlaylistId, songs) // ERROR HERE
           .subscribe(response => {
       });
@@ -377,42 +558,120 @@ export class LoginComponent implements OnInit{
       }
     });
 
-    console.log('end of friends mesh')
-
-    
-    console.log(this.user)
     this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
       this.playlists = playlists;
-      console.log(this.playlists);
       const selectedPlaylist = this.playlists.find(playlist => playlist.name === this.playlistName);
       this.myPlaylist = selectedPlaylist;
-      console.log(this.dropDown);
       const blendP =  this.playlists.find(playlist => playlist.name === this.dropDown);
-      console.log(selectedPlaylist?.id) // not detecting playlist throwbacks
-      console.log(blendP?.id)
-      //console.log(selectedPlaylist?.id)
       if (selectedPlaylist && blendP) {
           this.selectedPlaylistId = selectedPlaylist.id;
           this.blendPID = blendP.id;
           this.spotifyService.getSongs(this.user, this.blendPID).subscribe(allSongs => {
           const playlist = this.playlists.find(p => p.id === this.selectedPlaylistId);
-          console.log(playlist?.name)
 
         if (playlist && allSongs) {
-            console.log(allSongs);
             const songs = {
               uris: allSongs.map(song => `spotify:track:${song.id}`)
             };
+            this.songIDs = this.songIDs.concat(allSongs.map(song => song.id));
+            console.log(this.songIDs);
+            const url = `http://localhost:8000/groupPost/${this.groupName}`;
+            const headers = new HttpHeaders().set('Content-Type', 'application/json');
+            const options = { headers: headers };
+            console.log(this.songIDs);
+            const body = {
+              "groupID" : this.groupName,
+              "Matched" : this.songIDs,
+            };
+            this.http.put<Group>(url, body, options)
+              .subscribe(
+                  (res) => console.log(res),
+                  (err) => console.log(err)
+              );
             this.spotifyService.addSongs(this.user, this.selectedPlaylistId, songs) // ERROR HERE
             .subscribe(response => {
-            console.log(response);
         });
         }
         });
         }
+        
     });
-
   })
+
+}
+
+
+playlistExists: boolean = false;
+playlistID: string = '';
+groupMatchedSongs: string[] = [];
+notInPlaylist: string[] = [];
+
+getAllGroups(): void { // add functionality to check if the users playlist exists in their spotify account if not create it. If it is there then dipslay what songs differ between there playlist and matched and have a button to add those songs into playlist accordingly. 
+  for (const groupName of this.allOfMyGroupNames) {
+    const url = `http://localhost:8000/groupPost/${groupName}`;
+    this.http.get<Group>(url).subscribe(
+      (group: Group) => {
+        this.allOfMyGroups.push(group);
+        this.groupMatchedSongs = group.matched;
+
+
+    for(let playlist of this.playlists) {
+      if (playlist.name === groupName) {
+        this.playlistExists = true;
+      }
+    }
+    if (this.playlistExists === false) {
+      this.spotifyService.createPlaylist(groupName, this.userIds, this.user).then(() => {
+            this.spotifyService.getPlaylists(this.user).subscribe(playlists => { 
+            this.playlists = playlists;
+            const selectedPlaylist = this.playlists.find(playlist => playlist.name === group.groupID);
+            this.createdPlaylistID = selectedPlaylist?.id || 'defaultPlaylistId';
+            const songsA = {
+              uris: this.groupMatchedSongs.map(song => `spotify:track:${song}`)
+            };
+            this.spotifyService.addSongs(this.user, this.createdPlaylistID, songsA)
+        }); 
+      });
+    } else{
+      console.log("Else ran - playlist exists")
+      this.spotifyService.getPlaylists(this.user).subscribe(playlists => { 
+        this.playlists = playlists;
+        console.log(this.playlistName);
+        const selectedPlaylist = this.playlists.find(playlist => playlist.name === group.groupID);
+        this.createdPlaylistID = selectedPlaylist?.id || 'defaultPlaylistId';
+        console.log('created Playlist ID', this.createdPlaylistID);
+        if (selectedPlaylist) { // error here
+          console.log('THIS RAN');//  PLAYLIST IS NOT ABLE TO EXTRACT THE SONGS FROM THE PLAYLIST need to fix this
+          this.spotifyService.getSongs(this.user, this.createdPlaylistID).subscribe(allSongs => {
+            console.log('All songs in playlist:', allSongs) // LEFT OFF HERE
+            this.notInPlaylist = this.groupMatchedSongs
+              .filter(songID => !allSongs.some(song => song.id === songID))
+              .map(songName => `spotify:track:${songName}`);
+              const songsA = {
+                uris: this.notInPlaylist
+              };
+            console.log('Songs not in playlist:', this.notInPlaylist);
+            if(this.createdPlaylistID && songsA.uris.length > 0){
+                console.log('Songs were added to playlist');
+                this.spotifyService.addSongs(this.user, this.createdPlaylistID, songsA).subscribe(response => {
+                });
+            }
+          });
+
+        }
+      });
+
+
+    }
+
+        },
+        (error: any) => console.log(error)
+        
+      );
+
+    this.playlistExists = false;
+  }
+  
 }
 
 getUser(): Observable<boolean> {
@@ -422,6 +681,10 @@ getUser(): Observable<boolean> {
       // Check if user ID exists
       console.log(data.friends);
       this.friendsUserId = [...this.friendsUserId, ...data.friends];
+      if(data.groups){
+          this.allOfMyGroupNames = [...this.allOfMyGroupNames, ...data.groups];
+      }
+    
       console.log(this.friendsUserId);
       return true;
     }),
@@ -434,28 +697,37 @@ getUser(): Observable<boolean> {
 
 
 
-handleAuth() { // gets acess token and essentually logs in
-  this.spotifyService.handleAuthorizationResponse().then(() => {
+handleAuth() { // NEXT CHANGE HERE 
+  this.spotifyService.handleAuthorizationResponse().then(() => { 
     
-        this.spotifyService.getUserId()
-          .subscribe(user => {
-            this.user = user;
-            this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
-              this.playlists = playlists;
-              this.getUser().subscribe(userExists => {
-                if (userExists) {
-                  console.log('User exists');                               
-                  // display user friends
-                } else {
-                  console.log('User does not exist');
-                  this.addUser();
-                }
-            });
-          });
-    });
+    this.spotifyService.getUserId()
+      .subscribe(user => {
+        this.user = user;
+        this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
+          this.playlists = playlists;
+          this.getUser().subscribe(userExists => {
+            if (userExists) {
+              console.log('User exists');
+            } else {
+              console.log('User does not exist');
+            }
+            this.getAllGroups()
 
+            // CHECK IF PLAYLIST EXISTS OR NOT
+            
+
+
+
+            //Add functionaluty
+            this.showGroupList = true;
+          });
+        });
+      });
   });
+
+  
 }
+
 
 
 redirectToSpotifyAPI(){
@@ -487,6 +759,8 @@ addUser(): void {
 
 
   onSubmit() { // displays the songs and makes post request
+
+
 
 
     this.spotifyService.getRandomSongsFromRapCategory().subscribe(playlists => { // PRETTY CONFIDENT ABT THIS BUT NOT ANYTHING ELSE
@@ -550,8 +824,8 @@ addUser(): void {
           const songsA = {
             uris: this.arbAddSongs.map(song => `spotify:track:${song.id}`)
           };
-          if(this.myPlaylist){
-              this.spotifyService.addSongs(this.user,this.myPlaylist.id,songsA).subscribe(response => {
+          if(this.selectedGroupPlaylist){
+              this.spotifyService.addSongs(this.user,this.selectedGroupPlaylist.id,songsA).subscribe(response => {
           });
 
           }
