@@ -593,7 +593,6 @@ getAllGroups(): void { // add functionality to check if the users playlist exist
       (group: Group) => {
         this.allOfMyGroups.push(group);
         this.groupMatchedSongs = group.matched;
-
         this.playlistExists = false;
         console.log(groupName);
     for(let playlist of this.playlists) {
