@@ -87,7 +87,7 @@ func (*groupRepo) FindAll() ([]entity.Group, error) {
 		}
 		users, _ := convertToStringSlice(doc.Data()["Users"])
 		semiMatched, _ := convertToMap(doc.Data()["SemiMatched"])
-		matched, _ := convertToStringSlice(doc.Data()["Matched"])
+		matched, _ := convertToMap(doc.Data()["Matched"])
 		group := entity.Group{
 			GroupID:     doc.Data()["GroupID"].(string),
 			Users:       users,
@@ -128,7 +128,7 @@ func (*groupRepo) FindGroup(groupID string) (*entity.Group, error) {
 
 	var group entity.Group
 	snap[0].DataTo(&group)
-	//group.GroupID = snap[0].Ref.ID
+	group.GroupID = snap[0].Ref.ID
 
 	return &group, nil
 }
@@ -221,6 +221,7 @@ func convertToStringSlice(slice interface{}) ([]string, error) {
 		if !ok {
 			return nil, fmt.Errorf("element %d is not a string", i)
 		}
+
 		sSlice[i] = s
 	}
 	return sSlice, nil

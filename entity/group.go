@@ -18,5 +18,5 @@ type Group struct {
 	Users       []string           `json:"users"`
 	PlaylistID  string             `json:"playlistID"`
 	SemiMatched map[string]float64 `json:"semiMatched"`
-	Matched     []string           `json:"matched"`
+	Matched     map[string]float64 `json:"matched"`
 }
