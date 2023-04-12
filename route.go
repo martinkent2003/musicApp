@@ -449,14 +449,6 @@ func addLikedSong(resp http.ResponseWriter, req *http.Request) {
 		SemiMatched[songID]++
 	}
 
-	for song, value := range Matched {
-		if value/users < 0.6 {
-			SemiMatched[song] = value
-			for i := 0; i <= int(value); i++ {
-				delete(Matched, song)
-			}
-		}
-	}
 	for song, value := range SemiMatched {
 		if value/users >= 0.6 {
 			Matched[song] = value
