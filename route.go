@@ -483,3 +483,36 @@ func updateUserFriends(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(user)
 }
+
+func addGroupLikedSong(resp http.ResponseWriter, req *http.Request) {
+
+	resp.Header().Set("Content-type", "application/json")
+	vars := mux.Vars(req)
+	groupID := vars["groupID"]
+
+	var song string
+	err := json.NewDecoder(req.Body).Decode(&song)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error unmarshalling the song"}`))
+		return
+	}
+
+	group, err := groupRepo.FindGroup(groupID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error getting the group"}`))
+		return
+	}
+
+	//adds the new song to the group
+	group.Matched = append(group.Matched, song)
+
+	//removes any duplicates
+	group.Matched = removeDuplicates(group.Matched)
+
+	groupRepo.Update(group)
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(group)
+
+}

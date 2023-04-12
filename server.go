@@ -31,6 +31,8 @@ func main() {
 	router.HandleFunc("/userUpdateGroups/", updateUserGroups).Methods("PUT")
 	router.HandleFunc("/userUpdatePlaylists/", updatePlaylistName).Methods("PUT")
 
+	router.HandleFunc("/addSong/{groupID}", addGroupLikedSong).Methods("PUT")
+
 	router.HandleFunc("/userPost/{userID}", getUser).Methods("GET")
 	router.HandleFunc("/userPost", getUsers).Methods("GET")
 	router.HandleFunc("/userPost", addUsers).Methods("POST", "OPTIONS")
