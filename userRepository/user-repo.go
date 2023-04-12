@@ -53,10 +53,10 @@ func (*userRepo) Save(user *entity.User) (*entity.User, error) {
 	}
 
 	_, _, err = client.Collection(collectionName).Add(ctx, map[string]interface{}{
-		"Friends":    user.Friends,
-		"LikedSong":  user.LikedSong,
-		"GroupAdmin": user.GroupAdmin,
-		"UserID":     user.UserID,
+		"Friends":   user.Friends,
+		"LikedSong": user.LikedSong,
+		"Groups":    user.Groups,
+		"UserID":    user.UserID,
 	})
 
 	if err != nil {
@@ -98,8 +98,8 @@ func (*userRepo) Update(user *entity.User) (*entity.User, error) {
 		updateFields["LikedSong"] = user.LikedSong
 	}
 
-	if user.GroupAdmin != nil {
-		updateFields["GroupAdmin"] = user.GroupAdmin
+	if user.Groups != nil {
+		updateFields["Groups"] = user.Groups
 	}
 
 	// Update the user document with the provided fields
@@ -161,12 +161,12 @@ func (*userRepo) FindAll() ([]entity.User, error) {
 		}
 		friends, _ := convertToStringSlice(doc.Data()["Friends"])
 		likedSongs, _ := convertToStringSlice(doc.Data()["LikedSong"])
-		groupAdmin, _ := convertToMap(doc.Data()["GroupAdmin"])
+		groups, _ := convertToStringSlice(doc.Data()["Groups"])
 		user := entity.User{
-			Friends:    friends,
-			LikedSong:  likedSongs,
-			GroupAdmin: groupAdmin,
-			UserID:     doc.Data()["UserID"].(string),
+			Friends:   friends,
+			LikedSong: likedSongs,
+			Groups:    groups,
+			UserID:    doc.Data()["UserID"].(string),
 		}
 		users = append(users, user)
 	}

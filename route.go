@@ -87,9 +87,57 @@ func addGroups(resp http.ResponseWriter, req *http.Request) {
 		resp.Write([]byte(`{"error": "Error unmarshalling the groups array"}`))
 		return
 	}
+	//gets all the current users to verify that any user being added to group is actually a user
+	users, err := userRepo.FindAll()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error gettings the users"}`))
+		return
+	}
+	//checks if the users in the group are actually users
+	membersExist := true
+	for _, memberID := range group.Users {
+		memberExists := false
+		for _, u := range users {
+			if u.UserID == memberID {
+				memberExists = true
+				break
+			}
+		}
+		if !memberExists {
+			membersExist = false
+			break
+		}
+	}
+	if !membersExist {
+		resp.WriteHeader(http.StatusBadRequest)
+		resp.Write([]byte(`{"error": "One or more members do not exist"}`))
+		return
+	}
+	//checks if the group already exists
+	groups, err := groupRepo.FindAll()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error gettings the groups"}`))
+		return
+	}
+	if Groupcontains(groups, group) {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error: group already exists"}`))
+		return
+	}
 	groupRepo.Save(&group)
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(group)
+}
+
+func Groupcontains(groups []entity.Group, group entity.Group) bool {
+	for _, g := range groups {
+		if g.GroupID == group.GroupID {
+			return true
+		}
+	}
+	return false
 }
 
 /*
@@ -150,9 +198,26 @@ func addUsers(resp http.ResponseWriter, req *http.Request) {
 		resp.Write([]byte(`{"error": "One or more friends do not exist"}`))
 		return
 	}
+
+	if Usercontains(users, user) {
+		resp.WriteHeader(http.StatusBadRequest)
+		resp.Write([]byte(`{"error": "User already exists"}`))
+		return
+	}
+
 	userRepo.Save(&user)
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(user)
+}
+
+func Usercontains(users []entity.User, user entity.User) (exists bool) {
+	//check if the user already exists
+	for _, u := range users {
+		if u.UserID == user.UserID {
+			return true
+		}
+	}
+	return false
 }
 
 /*
