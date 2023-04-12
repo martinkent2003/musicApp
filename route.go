@@ -314,29 +314,6 @@ func putGroup(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(group)
 }
 
-/*
-To get all of the groups that a user is in, we need to get all of the groups and then filter them.
-*/
-func getGroupsByUser(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-type", "application/json")
-	vars := mux.Vars(req)
-	userID := vars["userID"]
-	user, err := userRepo.FindUser(userID)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error getting the user"}`))
-		return
-	}
-	//Now we need to get the groups string array from the user
-	var userGroups []string
-	for _, group := range user.Groups {
-		userGroups = append(userGroups, group)
-	}
-
-	resp.WriteHeader(http.StatusOK)
-	json.NewEncoder(resp).Encode(userGroups)
-}
-
 func updateGroupUsers(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var group entity.Group
@@ -488,10 +465,6 @@ func addLikedSong(resp http.ResponseWriter, req *http.Request) {
 			}
 			println("should have moved song from semi to matched")
 		}
-	}
-
-	for song := range SemiMatched {
-		println(song)
 	}
 
 	group.Matched = Matched

@@ -177,26 +177,27 @@ func (*groupRepo) Update(group *entity.Group) (*entity.Group, error) {
 	if len(snap) == 0 {
 		return nil, errors.New("group not found")
 	}
-
+	var groupFromDB entity.Group
+	snap[0].DataTo(&groupFromDB)
 	updateGroupFields := make(map[string]interface{})
 
 	if group.PlaylistID != "" {
 		updateGroupFields["PlaylistID"] = group.PlaylistID
 	}
-
-	if group.SemiMatched != nil {
-		updateGroupFields["SemiMatched"] = group.SemiMatched
-	}
-
-	if group.Matched != nil {
-		updateGroupFields["Matched"] = group.Matched
-	}
-
 	if group.Users != nil {
 		updateGroupFields["Users"] = group.Users
 	}
 
-	_, err = client.Collection("groups").Doc(snap[0].Ref.ID).Set(ctx, updateGroupFields, firestore.MergeAll)
+	if group.SemiMatched != nil || group.Matched != nil {
+		updateGroupFields["SemiMatched"] = group.SemiMatched
+		updateGroupFields["Matched"] = group.Matched
+		updateGroupFields["Users"] = groupFromDB.Users
+		updateGroupFields["GroupID"] = groupFromDB.GroupID
+		updateGroupFields["PlaylistID"] = groupFromDB.PlaylistID
+		_, err = client.Collection("groups").Doc(snap[0].Ref.ID).Set(ctx, updateGroupFields)
+	} else {
+		_, err = client.Collection("groups").Doc(snap[0].Ref.ID).Set(ctx, updateGroupFields, firestore.MergeAll)
+	}
 
 	if err != nil {
 		log.Fatalf("Failed to update group: %v", err)
