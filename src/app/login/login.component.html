@@ -83,20 +83,6 @@ type="text"
     </ul>
    
     
-      <div class="friend-selector">
-        <select [(ngModel)]="selectedFriend" (ngModelChange)="onFriendSelected(selectedFriend)">
-          <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
-        </select>
-      </div>
-    
-      <form>
-        <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
-          <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
-            {{ playlist.name }}
-          </option>
-        </select>
-      </form>
-    
     
       <div class="Blend-container">
         <button (click)="getUserData()">Blend</button>
@@ -106,7 +92,7 @@ type="text"
   </div>
 
 
-  <label for="groupSelector">Choose a group:</label>
+<label for="groupSelector">Choose a group:</label>
 <select id="groupSelector" [(ngModel)]="selectedGroupID" (change)="onSelect(selectedGroupID)">
   <option *ngFor="let group of allOfMyGroups" [value]="group.groupID">
     {{ group.groupID }} - {{ group.playlistID }}
@@ -120,7 +106,7 @@ type="text"
   
 
   
-<button (click)="onSubmit()">Display Songs</button>
+<!-- <button (click)="onSubmit()">Display Songs</button> -->
 
 
 <p *ngIf="selectedPlaylistF">Added Playlist: {{ selectedPlaylistF }}</p>

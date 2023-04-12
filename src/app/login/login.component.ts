@@ -68,6 +68,7 @@ export class LoginComponent implements OnInit{
   dropDown: string = ''; 
   friendsUserId: string[] = [];
   selectedFriend: string = '';
+  sFriends: string = '';
   selectedFriendsForGroup: string[] = [];
   groupOfFriends: string[]  = [];
   selectedPlaylistF = '';
@@ -96,8 +97,9 @@ export class LoginComponent implements OnInit{
 
 
   async onSelect(groupID: string): Promise<void> {
+    console.log(groupID);
     this.selectedGroup = this.allOfMyGroups.find(group => group.groupID === groupID);
-    this.selectedPlaylistID = groupID;
+    this.selectedPlaylistID = this.selectedGroup?.playlistID;
     console.log(groupID);
   
     this.spotifyService.getPlaylists(this.user).subscribe(playlists => {
@@ -526,7 +528,6 @@ export class LoginComponent implements OnInit{
           };
           this.songIDs = this.songIDs.concat(allSongs.map(song => song.id));
 
-
           // PUT REQUEST HERE
         
           this.spotifyService.addSongs(this.selectedFriend, this.selectedPlaylistId, songs) // ERROR HERE
@@ -573,7 +574,6 @@ export class LoginComponent implements OnInit{
         }
         });
         }
-        
     });
   })
 
@@ -596,7 +596,7 @@ getAllGroups(): void { // add functionality to check if the users playlist exist
         this.playlistExists = false;
         console.log(groupName);
     for(let playlist of this.playlists) {
-      if (playlist.name === groupName) {
+      if (playlist.name === group.playlistID) {
         console.log("Else ran - playlist exists")
         this.playlistExists = true;
       }
@@ -606,13 +606,14 @@ getAllGroups(): void { // add functionality to check if the users playlist exist
 
     if (this.playlistExists === false) {
       console.log("If ran - playlist does not exist")
-      this.spotifyService.createPlaylist(groupName, this.userIds, this.user).then(() => {
+      this.spotifyService.createPlaylist(group.playlistID, this.userIds, this.user).then(() => {
             this.spotifyService.getPlaylists(this.user).subscribe(playlists => { 
             this.playlists = playlists;
-            const selectedPlaylist = this.playlists.find(playlist => playlist.name === group.groupID);
+            const selectedPlaylist = this.playlists.find(playlist => playlist.name === group.playlistID);
             console.log("found playlist after creating it: ", selectedPlaylist);
             this.createdPlaylistID = selectedPlaylist?.id || 'defaultPlaylistId';
             console.log('created Playlist ID', this.createdPlaylistID);
+            console.log("songs in Database: ",this.groupMatchedSongs);
             const songsA = {
               uris: this.groupMatchedSongs.map(song => `spotify:track:${song}`)
             };
@@ -625,7 +626,7 @@ getAllGroups(): void { // add functionality to check if the users playlist exist
       this.spotifyService.getPlaylists(this.user).subscribe(playlists => { 
         this.playlists = playlists;
         console.log(this.playlistName);
-        const selectedPlaylist = this.playlists.find(playlist => playlist.name === group.groupID);
+        const selectedPlaylist = this.playlists.find(playlist => playlist.name === group.playlistID);
         this.createdPlaylistID = selectedPlaylist?.id || 'defaultPlaylistId';
         console.log('created Playlist ID', this.createdPlaylistID);
         if (selectedPlaylist) { // error here
@@ -697,6 +698,7 @@ handleAuth() { // NEXT CHANGE HERE
             if (userExists) {
               console.log('User exists');
             } else {
+              this.addUser();
               console.log('User does not exist');
             }
             this.getAllGroups()
