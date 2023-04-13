@@ -33,7 +33,6 @@ func main() {
 	router.HandleFunc("/userPost", getUsers).Methods("GET")
 	router.HandleFunc("/userPost", addUsers).Methods("POST", "OPTIONS")
 	router.HandleFunc("/userPost/{userID}", deleteUser).Methods("DELETE")
-	router.HandleFunc("/userGroups/{userID}", getGroupsByUser).Methods("GET")
 
 	headers := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"})
