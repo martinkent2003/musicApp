@@ -117,7 +117,7 @@ export class SpotifyService {
         this.accessToken = response.access_token;
       }
       // After successful login, redirect the user to the home page of the application.
-      this.router.navigate(['/']); //TODO: if you want it to redirect to another component enter it after / | ex. '/home'
+      this.router.navigate(['/main']); //TODO: if you want it to redirect to another component enter it after / | ex. '/home'
     } catch (error) {
       // If there is an error, log it to the console.
       console.error(error);
@@ -239,42 +239,41 @@ export class SpotifyService {
         });
 
         return this.http
-        .get<any>(
-          `https://api.spotify.com/v1/browse/categories/${rapCategoryId}/playlists`,
-          { headers }
-        )
-        .pipe(
-          switchMap((response) => {
-            const playlistObservables = response.playlists.items.map(
-              (playlist: {
-                uri: any;
-                id: string;
-                name: string;
-                imageURL: string;
-              }) => {
-                // Fetch the playlist ID from the 'uri' property
-                const id = playlist.uri.split(':')[2];
-                return this.getSongsFromPlaylist(id).pipe(
-                  map((songs) => {
-                    // Randomize the order of songs
-                    for (let i = songs.length - 1; i > 0; i--) {
-                      const j = Math.floor(Math.random() * (i + 1));
-                      [songs[i], songs[j]] = [songs[j], songs[i]];
-                    }
-                    return {
-                      id: id,
-                      name: playlist.name,
-                      songs: songs,
-                    } as Playlist;
-                  })
-                );
-              }
-            );
-            return forkJoin(playlistObservables);
-          }),
-          map((playlists) => playlists as Playlist[])
-        );
-      
+          .get<any>(
+            `https://api.spotify.com/v1/browse/categories/${rapCategoryId}/playlists`,
+            { headers }
+          )
+          .pipe(
+            switchMap((response) => {
+              const playlistObservables = response.playlists.items.map(
+                (playlist: {
+                  uri: any;
+                  id: string;
+                  name: string;
+                  imageURL: string;
+                }) => {
+                  // Fetch the playlist ID from the 'uri' property
+                  const id = playlist.uri.split(':')[2];
+                  return this.getSongsFromPlaylist(id).pipe(
+                    map((songs) => {
+                      // Randomize the order of songs
+                      for (let i = songs.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [songs[i], songs[j]] = [songs[j], songs[i]];
+                      }
+                      return {
+                        id: id,
+                        name: playlist.name,
+                        songs: songs,
+                      } as Playlist;
+                    })
+                  );
+                }
+              );
+              return forkJoin(playlistObservables);
+            }),
+            map((playlists) => playlists as Playlist[])
+          );
       })
     );
   }
