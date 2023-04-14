@@ -99,6 +99,10 @@ export class LoginComponent implements OnInit{
   async onSelect(groupID: string): Promise<void> {
     console.log(groupID);
     this.selectedGroup = this.allOfMyGroups.find(group => group.groupID === groupID);
+    if(this.selectedGroup) {
+      this.selectedGroupID = this.selectedGroup?.groupID;
+    }
+    
     this.selectedPlaylistID = this.selectedGroup?.playlistID;
     console.log(groupID);
   
@@ -131,6 +135,11 @@ export class LoginComponent implements OnInit{
       console.error('No .playlist-container element was found in the DOM.');
       return;
     }
+
+
+
+
+
     
     
     if (this.randomActualSongs?.songs) {
@@ -164,6 +173,10 @@ export class LoginComponent implements OnInit{
         likeButton.style.right = '0';
         
         likeButton.addEventListener('click', () => {
+          this.addSong(song.id,this.selectedGroupID)
+
+          
+          
           
           this.arbAddSongs[0] = song;
           const songsA = {
@@ -261,6 +274,7 @@ export class LoginComponent implements OnInit{
 
       likeButton.addEventListener('click', () => {
         console.log("LIKE BUTTON CLICKED");
+        this.addSong(song.id,this.selectedGroupID)
 
         this.arbAddSongs[0] = song;
         const songsA = {
@@ -342,20 +356,28 @@ export class LoginComponent implements OnInit{
   }
 
 
+  addSong(songID: string, groupName: string){
+    console.log("SONG ID", songID);
+    const url = `http://localhost:8000/addSong/${groupName}`;
+    const songData = JSON.stringify(songID);
+    this.http.put(url, songData).subscribe(response => {
+      console.log(response);
+    });
+  }
+
+
 
 
   
   addFriendToDatabase(name: string){ 
     console.log(this.friendsUserId);
     const url = 'http://localhost:8000/userUpdateFriends/';
-    
+
     const friendData = {
       "userID": this.user,
       "friends": [name]  // change to singular name intead of this.friendsUserId
     };
 
-    
-  
     this.http.put<FriendResponse>(url, friendData).subscribe(response => {
       console.log(response);
       const friendsArray = response.friends; // extract the friends array from the response
@@ -481,6 +503,8 @@ export class LoginComponent implements OnInit{
 
 
 
+
+
   addFriendsToGroup(): void { // adds friends selected to group using a put request to database
     // const body = {
     //   groupID: this.,
@@ -506,6 +530,7 @@ export class LoginComponent implements OnInit{
 
   async getUserData() { // ADD ALL OF THE SONGS ADDED TO PLAYLIST TO THE MATCHED SONGS ARRAY - done
 
+
   
     this.spotifyService.createPlaylist(this.playlistName,this.userIds, this.user).then(() => { 
 
@@ -523,10 +548,15 @@ export class LoginComponent implements OnInit{
         this.selectedPlaylistId = selectedPlaylist.id;
         this.spotifyService.getSongs(this.selectedFriend, blendP.id).subscribe(allSongs => {
       if (blendP && allSongs) { // DOES NOT WORK HERE
-          const songs = {
-            uris: allSongs.map(song => `spotify:track:${song.id}`)
-          };
-          this.songIDs = this.songIDs.concat(allSongs.map(song => song.id));
+        const addedSongIds = new Set<string>();
+        const newSongIDs = allSongs.filter(song => !addedSongIds.has(song.name)).map(song => {
+          addedSongIds.add(song.name);
+          return song.id;
+        });
+        this.songIDs = [...new Set([...this.songIDs, ...newSongIDs])]; // combine existing and new song IDs and filter out duplicates
+        const songs = {
+          uris: newSongIDs.map(songId => `spotify:track:${songId}`)
+        };
 
           // PUT REQUEST HERE
         
@@ -549,12 +579,27 @@ export class LoginComponent implements OnInit{
           this.spotifyService.getSongs(this.user, this.blendPID).subscribe(allSongs => {
           const playlist = this.playlists.find(p => p.id === this.selectedPlaylistId);
 
-        if (playlist && allSongs) {
+          if (playlist && allSongs) {
+            const addedSongIds = new Set<string>();
+            const newSongIDs = allSongs.filter(song => {
+              if (!addedSongIds.has(song.id)) {
+                addedSongIds.add(song.id);
+                return true;
+              } else {
+                return false;
+              }
+            }).map(song => song.id);
+            const songNames = allSongs.filter(song => !addedSongIds.has(song.id)).map(song => {
+              return song;
+            });
+
+            this.songIDs = [...new Set([...this.songIDs, ...newSongIDs])]; // combine existing and new song IDs and filter out duplicates
             const songs = {
-              uris: allSongs.map(song => `spotify:track:${song.id}`)
+              uris: newSongIDs.map(songId => `spotify:track:${songId}`)
             };
-            this.songIDs = this.songIDs.concat(allSongs.map(song => song.id));
-            console.log(this.songIDs);
+
+            console.log("SONG NAMES",newSongIDs);
+
             const url = `http://localhost:8000/groupPost/${this.groupName}`;
             const headers = new HttpHeaders().set('Content-Type', 'application/json');
             const options = { headers: headers };
@@ -564,10 +609,17 @@ export class LoginComponent implements OnInit{
               "Matched" : this.songIDs,
             };
             this.http.put<Group>(url, body, options)
-              .subscribe(
-                  (res) => console.log(res),
-                  (err) => console.log(err)
-              );
+            .subscribe(
+              (res) => {
+                console.log(res);
+                this.allOfMyGroupNames.push(this.groupName);
+                this.justGetGroups();
+              },
+              (err) => console.log(err)
+            );
+          
+                
+
             this.spotifyService.addSongs(this.user, this.selectedPlaylistId, songs) // ERROR HERE
             .subscribe(response => {
         });
@@ -577,6 +629,18 @@ export class LoginComponent implements OnInit{
     });
   })
 
+}
+
+justGetGroups(): void {
+  console.log(this.allOfMyGroupNames);
+  for (const groupName of this.allOfMyGroupNames) {
+    const url = `http://localhost:8000/groupPost/${groupName}`;
+    this.http.get<Group>(url).subscribe(
+      (group: Group) => {
+        this.allOfMyGroups.push(group);
+      }
+    );
+  }
 }
 
 
@@ -669,12 +733,13 @@ getUser(): Observable<boolean> {
     map((data: any) => {
       // Check if user ID exists
       console.log(data.friends);
-      this.friendsUserId = [...this.friendsUserId, ...data.friends];
+      if(data.friends){
+        this.friendsUserId = [...this.friendsUserId, ...data.friends];
+      }
       if(data.groups){
           this.allOfMyGroupNames = [...this.allOfMyGroupNames, ...data.groups];
       }
     
-      console.log(this.friendsUserId);
       return true;
     }),
     catchError((error: any) => {
@@ -810,6 +875,8 @@ addUser(): void {
         likeButton.style.bottom = '0';
         likeButton.style.right = '0';
         likeButton.addEventListener('click', () => {
+        this.addSong(song.id,this.selectedGroupID)
+          
           this.arbAddSongs[0] = song;
           const songsA = {
             uris: this.arbAddSongs.map(song => `spotify:track:${song.id}`)
