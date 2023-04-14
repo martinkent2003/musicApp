@@ -19,6 +19,7 @@
 
 
 <div class="group-list" *ngIf="showGroupList">
+  <h3>My Groups</h3>
   <ul>
     <li *ngFor="let group of allOfMyGroups">
       {{ group.groupID }} - {{ group.users.join(', ') }} - {{ group.playlistID }}
@@ -34,6 +35,8 @@ type="text"
 
 <button (click)="addFriend(nameInput.value)">Add Friend</button>
 
+
+<h3>My Friends</h3>
 <ul>
   <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
 </ul>
