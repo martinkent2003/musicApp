@@ -1,4 +1,4 @@
-/*------------ login.component.css ------------*/
+/*------------ main.component.css ------------*/
 
 /*------ button container and buttons ------*/
 .button-container {
@@ -117,5 +117,3 @@
   display: flex;
   justify-content: flex-start;
 }
-
-

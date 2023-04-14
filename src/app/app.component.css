@@ -24,10 +24,25 @@ h1 {
 
 /* Style the navigation menu with a horizontal layout */
 nav {
-  margin-top: 0%;
+  margin-bottom: 2%;
   display: flex;
-  justify-content: left;
+  justify-content: space-between;
   align-items: center;
-  padding: 0;
+  padding: 5px 20px;
+  background-color: #395d92;
+  border-radius: 5px;
+}
+
+/* Style the links inside the navigation menu */
+nav a {
   color: white;
+  text-decoration: none;
+  font-size: 15px;
+  margin-right: 0px;
+}
+
+/* Style the active link */
+nav a.active {
+  font-weight: bold;
+  text-decoration: underline;
 }
