@@ -9,11 +9,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 // Import application components
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
-import { HomeComponent } from './home/home.component';
+import { MainComponent } from './main/main.component';
+import { AboutComponent } from './about/about.component';
 
 // Import application routing module
 import { AppRoutingModule } from './app-routing.module';
+import { LandingComponent } from './landing/landing.component';
 
 @NgModule({
   // Declare the imports used by the module
@@ -27,7 +28,7 @@ import { AppRoutingModule } from './app-routing.module';
     AppRoutingModule, // Contains the defined routes for the application (must be imported after RouterModule)
   ],
   // Declare the components that belong to the module
-  declarations: [AppComponent, LoginComponent, HomeComponent],
+  declarations: [AppComponent, LandingComponent, MainComponent, AboutComponent],
   // Declare the services used by the module
   providers: [],
   // Declare the root component that will be used to bootstrap the application

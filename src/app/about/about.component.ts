@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  selector: 'app-about',
+  templateUrl: './about.component.html',
+  styleUrls: ['./about.component.css'],
 })
-export class HomeComponent {
+export class AboutComponent {
   email: string = '';
   password: string = '';
-  constructor(){}
+  constructor() {}
   onSubmit() {
     console.log(`Email: ${this.email}`);
     console.log(`Password: ${this.password}`);

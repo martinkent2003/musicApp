@@ -3,23 +3,26 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 // import the components that will be used for routing
-import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
+import { LandingComponent } from './landing/landing.component';
+import { MainComponent } from './main/main.component';
+import { AboutComponent } from './about/about.component';
 
-// define the routes that will be used in the application
+// Define the routes for the application
 const routes: Routes = [
-  // redirect to login page by default
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  // map the '/login' URL to the LoginComponent
-  { path: 'login', component: LoginComponent },
-  // map the '/home' URL to the HomeComponent
-  { path: 'home', component: HomeComponent },
+  // Default route, redirects to '/landing' when the app loads
+  { path: '', redirectTo: '/landing', pathMatch: 'full' },
+  // Route for the landing page
+  { path: 'landing', component: LandingComponent },
+  // Route for the main page
+  { path: 'main', component: MainComponent },
+  // Route for the about page
+  { path: 'about', component: AboutComponent },
 ];
 
 @NgModule({
-  // set up the router module with the defined routes
+  // Import the RouterModule with the defined routes
   imports: [RouterModule.forRoot(routes)],
-  // export the RouterModule so other modules can use it
-  exports: [RouterModule]
+  // Export the RouterModule so other modules can use it
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
