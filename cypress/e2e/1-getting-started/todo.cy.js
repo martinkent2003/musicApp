@@ -12,13 +12,37 @@ describe('Login Component', () => {
 
   it('should redirect to Spotify API', () => {
     cy.get('button').contains('Link Spotify').click(); // click the Redirect to Spotify API button
-    //cy.url().should('eq', 'https://api.spotify.com/'); // make sure the URL has changed to the Spotify API URL
+  
+    const checkUrl = (counter) => {
+      if (counter > 60) {
+        throw new Error('Timed out waiting for redirect to localhost');
+      }
+  
+      cy.url().then(url => {
+        if (!url.includes('http://localhost:4200/')) {
+  
+          cy.wait(1000); // wait 1 second before checking the URL again
+          checkUrl(counter + 1); // call the function recursively with an incremented counter
+        } else {
+          cy.url().should('include', 'http://localhost:4200/'); // make sure the URL has changed to the localhost URL
+        }
+      });
+    };
+  
+    checkUrl(0); // start the recursive function with a counter of 0
+  });
+  
+  
+  
+
+  it('should handle auth', () => {
+    cy.get('button').contains('Login').click(); // click the handle auth button
+  
   });
 
-  // it('should handle auth', () => {
-  //   cy.get('button').contains('handle auth').click(); // click the handle auth button
-  //   cy.url().should('include', 'https://accounts.spotify.com/'); // make sure the URL has changed to the Spotify accounts URL
-  // });
+
+
+
   it('should add multiple friends and select a Random Friend', () => {
     const friendNames = ['John', 'Sarah', 'Mike', 'Akshat', 'Aryaan Verma', 'Vasu Sorathia', 'Drake', 'Kevin']; // set an array of friend names to use in the test
     cy.wrap(friendNames).each((friendName) => { // loop through the friend names array using Cypress' .each() method

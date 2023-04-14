@@ -81,6 +81,21 @@ type="text"
         {{ song.name }}
       </li>
     </ul>
+
+    <div class="friend-selector">
+      <select [(ngModel)]="sFriends" (ngModelChange)="onFriendSelected(sFriends)">
+        <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
+      </select>
+    </div>
+  
+    <form>
+      <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
+        <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">
+          {{ playlist.name }}
+        </option>
+      </select>
+    </form>
+  
    
     
     
