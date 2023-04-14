@@ -32,6 +32,7 @@ func main() {
 	router.HandleFunc("/userUpdatePlaylists/", updatePlaylistName).Methods("PUT")
 
 	router.HandleFunc("/addSong/{groupID}", addGroupLikedSong).Methods("PUT")
+	router.HandleFunc("/checkIfMatched/{groupID}/{songID}", checkIfMatched).Methods("GET")
 
 	router.HandleFunc("/userPost/{userID}", getUser).Methods("GET")
 	router.HandleFunc("/userPost", getUsers).Methods("GET")
