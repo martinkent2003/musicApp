@@ -516,3 +516,27 @@ func addGroupLikedSong(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(group)
 
 }
+
+func checkIfMatched(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-type", "application/json")
+	vars := mux.Vars(req)
+	groupID := vars["groupID"]
+	songID := vars["songID"]
+	groupFromDB, err := groupRepo.FindGroup(groupID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error getting the group"}`))
+		return
+	}
+	isInMatched := false
+
+	//checks if the group.Matched has the songID
+	for _, song := range groupFromDB.Matched {
+		if song == songID {
+			isInMatched = true
+			break
+		}
+	}
+	resp.WriteHeader(http.StatusOK)
+	json.NewEncoder(resp).Encode(isInMatched)
+}
