@@ -1,0 +1,12 @@
+.instructions {
+  padding-left: 20px; /* adjust the padding value as needed */
+}
+
+.instructions p {
+  margin: 10px 0;
+}
+
+.instructions span {
+  font-weight: bold;
+  margin-right: 10px;
+}
