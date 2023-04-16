@@ -8,14 +8,14 @@ import { Component, OnInit } from '@angular/core';
 export class LandingComponent implements OnInit {
   // An array of quotes by famous musicians that contain the word "vibe".
   quotes: string[] = [
-    '"Vibe is everything❗️" - Pharrell Williams',
-    '"Everything is vibration [Vibez] 🔬" - Albert Einstein',
-    '"I\'m just trying to vibe out and eat some good food 🍕" - Post Malone',
-    '"I like my music to have the right kind of vibe, like a good soup 🍜" - Anderson .Paak',
-    '"I\'m all about good vibes and high fives 🖐️" - Janelle Monae',
-    '"When I\'m writing music, I\'m just trying to get in a good vibe and make something that feels good 🤩" - Charlie Puth',
-    '"I try to keep my vibe as good as possible, and usually that means keeping my shoes fresh 👟" - Travis Scott',
-    '"I like to vibe out with my guitar and see where it takes me 🎸" - John Mayer',
+    '"VIBE is everything❗️" - Pharrell Williams',
+    '"Everything is vibration [VIBEz] 🔬" - Albert Einstein',
+    '"I\'m just trying to VIBE out and eat some good food 🍕" - Post Malone',
+    '"I like my music to have the right kind of VIBE, like a good soup 🍜" - Anderson .Paak',
+    '"I\'m all about good VIBEz and high fives 🖐️" - Janelle Monae',
+    '"When I\'m writing music, I\'m just trying to get in a good VIBE and make something that feels good 🤩" - Charlie Puth',
+    '"I try to keep my VIBE as good as possible, and usually that means keeping my shoes fresh 👟" - Travis Scott',
+    '"I like to VIBE out with my guitar and see where it takes me 🎸" - John Mayer',
   ];
 
   // The index of the current quote being displayed.
