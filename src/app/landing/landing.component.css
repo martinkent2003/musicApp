@@ -1,25 +1,49 @@
-/* Set styles for the instructions section */
 .instructions {
   /* Add padding to the left side of the instructions section */
   padding-left: 20px; /* adjust the padding value as needed */
+
+  /* Set the position to fixed and center the element horizontally */
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-/* Set styles for paragraphs in the instructions section */
+/* Styling for paragraph inside instructions section */
 .instructions p {
-  /* Add margin above and below each paragraph */
+  /* Set the margin above and below the paragraph */
   margin: 10px 0;
+  /* Set the font size */
+  font-size: 16px;
+  /* Set the font weight to bold */
+  font-weight: bold;
 }
 
-/* Set styles for spans in the instructions section */
+/* Styling for span inside instructions section */
 .instructions span {
-  /* Make the text bold */
+  /* Set the display to inline-block */
+  display: inline-block;
+  /* Set the width */
+  width: 100px; /* adjust the width value as needed */
+  /* Set the font weight to bold */
   font-weight: bold;
-  /* Add margin to the right side of the span */
+  /* Set the margin to the right */
   margin-right: 10px;
+  /* Set the text color */
+  color: #007bff;
+}
+
+/* Styling for h2 inside instructions section */
+.instructions h2 {
+  /* Set the text color */
+  color: #007bff;
+  /* Apply underline decoration to the text */
+  text-decoration: underline;
 }
 
 /* Set styles for the quote container */
 #quote-container {
+  outline: 1px solid black;
+
   /* Set the background color of the quote container */
   background-color: rgb(199, 199, 199);
   /* Add rounded corners to the quote container */
@@ -27,11 +51,13 @@
   /* Center the contents of the quote container */
   text-align: center;
   /* Add margin to the left and right sides of the quote container */
-  margin: 0% 15%;
+  margin: 0 auto;
   /* Add padding to the top, left, and right sides of the quote container */
   padding: 1px 5px 5px;
   /* Add a shadow to the quote container */
   box-shadow: 0 0 100px 20px rgba(29, 185, 84, 0.75);
+  margin-bottom: 70px; /* add margin-bottom */
+  max-width: 800px;
 }
 
 /* Set styles for the quote heading */
@@ -57,5 +83,105 @@
   /* Add margin below the quote text */
   margin-bottom: 20px;
   /* Set the font family for the quote text */
-  font-family: "Times New Roman", Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+/* Styling for button */
+button {
+  /* Set the background color */
+  background-color: #007bff;
+  /* Set the text color */
+  color: #fff;
+  /* Set the font size */
+  font-size: 16px;
+  /* Remove the border */
+  border: none;
+  /* Add rounded corners */
+  border-radius: 5px;
+  /* Set the padding around the button */
+  padding: 10px 20px;
+  /* Set the cursor to a pointer */
+  cursor: pointer;
+}
+
+/* Styling for button hover effect */
+button:hover {
+  /* Change the background color on hover */
+  background-color: #0069d9;
+}
+
+/* Styling for vibey-header */
+.vibey-header {
+  /* Set the font size */
+  font-size: 48px;
+  /* Set the text color */
+  color: #89cff0;
+  /* Set the text stroke for Safari and Chrome */
+  -webkit-text-stroke: 1px black;
+  /* Set the text stroke for Firefox */
+  text-stroke: 1px black;
+  /* Add text shadow */
+  text-shadow: 2px 5px 4px rgba(29, 185, 84, 0.75);
+  /* Set letter spacing */
+  letter-spacing: 4px;
+  /* Set line height */
+  line-height: 1.2;
+  /* Set animation to pulsate */
+  animation: pulsate 5s infinite;
+  /* Center-align the text */
+  text-align: center;
+}
+
+/* Animation keyframes for vibey-header */
+@keyframes pulsate {
+  0% {
+    /* Start at normal size */
+    transform: scale(1);
+  }
+  50% {
+    /* Scale to 1.03 */
+    transform: scale(1.03);
+  }
+  100% {
+    /* Return to normal size */
+    transform: scale(1);
+  }
+}
+
+/* Styling for welcome-paragraph */
+.welcome-paragraph {
+  /* Set text color */
+  color: rgb(255, 255, 255);
+  /* Center-align the text */
+  text-align: center;
+  /* Set the font size */
+  font-size: 18px;
+  /* Set the line height */
+  line-height: 1.5;
+  /* Set the maximum width */
+  max-width: 700px;
+  /* Center the element horizontally */
+  margin: 0 auto;
+  /* Add padding around the element */
+  padding: 30px;
+  /* Set the background color with transparency */
+  background-color: rgba(199, 199, 199, 0.153);
+  /* Add rounded corners */
+  border-radius: 10px;
+  /* Add a subtle shadow around the element */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for footer */
+.footer {
+  /* Center-align the text */
+  text-align: center;
+}
+
+/* Styling for paragraph inside footer */
+.footer p {
+  /* Set the font size */
+  font-size: 15px;
+  /* Set the font style to italic */
+  font-style: italic;
 }

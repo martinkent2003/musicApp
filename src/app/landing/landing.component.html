@@ -1,6 +1,6 @@
 <!-- landing.component.html -->
 <div class="welcome-message">
-  <h1>Join the House of Vibez Today</h1>
+  <h1 class="vibey-header">Join the House of Vibez Today</h1>
   <div id="quote-container">
     <h5>Vibez are important but don't just take our word...</h5>
     <h3 id="quote-text">"Good Vibez Only" - People of Planet Earth 🌎</h3>
@@ -16,10 +16,12 @@
     your friends, making sure everyone is on the same page when it comes to
     music. So go ahead, create the perfect vibe for your next party and let
     VibeShare take care of the rest. We can't wait to see what you come up
-    with!"
+    with!"<br />
+    <a style="display: block">- Sincerely, Vibe Team -</a>
   </p>
 </div>
 <div class="instructions">
+  <h2>Instructions:</h2>
   <p>
     <span>Step 1:</span> Press "Link Spotify" and signin with your Spotify
     account
@@ -37,12 +39,13 @@
     songs to match your group's vibe
   </p>
   <p><span>Step 6:</span> Enjoy and connect with friends through VibeShare!</p>
-</div>
+  <br /><br />
+  <div class="footer">
+    <p>
+      If you need to see the instructions again, just press the "Instructions"
+      button on the navigation bar
+    </p>
 
-<div>
-  <p>
-    If you need to see the instructions again, just press the "Instructions"
-    button on the navigation bar
-  </p>
-  <button routerLink="/main">Get Vibing 😆</button>
+    <button routerLink="/main">Get Vibing 😆</button>
+  </div>
 </div>
