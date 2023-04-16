@@ -20,6 +20,7 @@ h1 {
   background-color: #1db954;
   padding: 10px 20px;
   border-radius: 5px;
+  box-shadow: 0 0 10px rgb(255, 255, 255, 0.5);
 }
 
 /* Style the navigation menu with a horizontal layout */
@@ -29,20 +30,34 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 5px 20px;
-  background-color: #395d92;
+  background-color: #1d60c5c6;
   border-radius: 5px;
 }
 
 /* Style the links inside the navigation menu */
 nav a {
-  color: white;
+  color: rgb(199, 199, 199);
   text-decoration: none;
   font-size: 15px;
   margin-right: 0px;
+  border: 1px solid rgb(199, 199, 199);
+  padding: 5px;
+  border-radius: 5px;
 }
 
 /* Style the active link */
 nav a.active {
   font-weight: bold;
+  color: white;
+  border: 1px solid rgb(255, 255, 255);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+/* Add a hover effect to the links */
+nav a:hover {
+  color: #1db954;
+  font-weight: bold;
   text-decoration: underline;
+  border: 1px solid #1db954;
 }
