@@ -9,7 +9,7 @@ export class LandingComponent implements OnInit {
   // An array of quotes by famous musicians that contain the word "vibe".
   quotes: string[] = [
     '"Vibe is everything❗️" - Pharrell Williams',
-    '"Everything is vibration [VIBEZ]. 🔬" - Albert Einstein',
+    '"Everything is vibration [Vibez]. 🔬" - Albert Einstein',
     '"I\'m just trying to vibe out and eat some good food. 🍕" - Post Malone',
     '"I like my music to have the right kind of vibe, like a good soup. 🍜" - Anderson .Paak',
     '"I\'m all about good vibes and high fives. 🖐️" - Janelle Monae',

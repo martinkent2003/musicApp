@@ -1,12 +1,61 @@
+/* Set styles for the instructions section */
 .instructions {
+  /* Add padding to the left side of the instructions section */
   padding-left: 20px; /* adjust the padding value as needed */
 }
 
+/* Set styles for paragraphs in the instructions section */
 .instructions p {
+  /* Add margin above and below each paragraph */
   margin: 10px 0;
 }
 
+/* Set styles for spans in the instructions section */
 .instructions span {
+  /* Make the text bold */
   font-weight: bold;
+  /* Add margin to the right side of the span */
   margin-right: 10px;
+}
+
+/* Set styles for the quote container */
+#quote-container {
+  /* Set the background color of the quote container */
+  background-color: rgb(199, 199, 199);
+  /* Add rounded corners to the quote container */
+  border-radius: 15px;
+  /* Center the contents of the quote container */
+  text-align: center;
+  /* Add margin to the left and right sides of the quote container */
+  margin: 0% 15%;
+  /* Add padding to the top, left, and right sides of the quote container */
+  padding: 1px 5px 5px;
+  /* Add a shadow to the quote container */
+  box-shadow: 0 0 100px 20px rgba(29, 185, 84, 0.75);
+}
+
+/* Set styles for the quote heading */
+#quote-container h5 {
+  /* Set the font size for the quote heading */
+  font-size: 16px;
+  /* Set the text color for the quote heading */
+  color: #282828;
+  /* Make the font style italic for the quote heading */
+  font-style: italic;
+  /* Add margin below the quote heading */
+  margin-bottom: 10px;
+}
+
+/* Set styles for the quote text */
+#quote-container h3 {
+  /* Set the font size for the quote text */
+  font-size: 24px;
+  /* Set the font weight for the quote text */
+  font-weight: bold;
+  /* Set the text color for the quote text */
+  color: #242424;
+  /* Add margin below the quote text */
+  margin-bottom: 20px;
+  /* Set the font family for the quote text */
+  font-family: "Times New Roman", Times, serif;
 }
