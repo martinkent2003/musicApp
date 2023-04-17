@@ -93,6 +93,7 @@ export class MainComponent implements OnInit {
   selectedPlaylistID: string | undefined;
 
   async onSelect(groupID: string): Promise<void> {
+
     console.log(groupID);
     this.selectedGroup = this.allOfMyGroups.find(
       (group) => group.groupID === groupID
@@ -127,7 +128,11 @@ export class MainComponent implements OnInit {
         console.log(firstPlaylist); //does not work during first try - works second try
         console.log(firstPlaylist.songs);
 
+        
         const playlistContainer = document.querySelector('.song-card');
+
+
+
         this.randomActualSongs = this.randomP[0]; // something wrong here
 
         console.log(this.randomActualSongs.songs); //does not work at all
@@ -148,10 +153,13 @@ export class MainComponent implements OnInit {
   displaySong() {
     //displays a new song
     const playlistContainer = document.querySelector('.song-card');
+
+
     if (!playlistContainer) {
       console.error('Error: playlistContainer not found');
       return;
     }
+    playlistContainer.innerHTML = '';
 
     if (this.randomActualSongs?.songs) {
       const song = this.randomActualSongs.songs[this.myNumber];
