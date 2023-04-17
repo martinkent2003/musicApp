@@ -117,3 +117,7 @@
   display: flex;
   justify-content: flex-start;
 }
+.friend-select {
+  margin-bottom: 10px;
+}
+

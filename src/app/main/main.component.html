@@ -49,12 +49,12 @@ type="text"
   <div class="group-form" div *ngIf="showGroupForm">
     <div>
       <input type="text" [(ngModel)]="groupName" placeholder="Group Name"/>
-      <button (click)="submitGroupName()">Submit Name</button>
+      <!-- <button (click)="submitGroupName()">Submit Name</button> -->
     </div>
 
     <div>
       <input type="text" [(ngModel)]="playlistName" placeholder="Playlist Name"/>
-      <button (click)="submitPlaylistName()">Submit Playlist Name</button>
+      <!-- <button (click)="submitPlaylistName()">Submit Playlist Name</button> -->
     </div>
   
     <div>
@@ -71,6 +71,7 @@ type="text"
       <li *ngFor="let member of groupMembers">{{ member }}</li>
     </ul>
 
+    <label for="dropDown">Select from your Playlist:</label>
     <form>
       <select [(ngModel)]="dropDown" name="dropDown">
         <option *ngFor="let playlist of playlists" [value]="playlist.name">
@@ -85,12 +86,14 @@ type="text"
       </li>
     </ul>
 
+    <label for="dropDown">Select a friend:</label>
     <div class="friend-selector">
-      <select [(ngModel)]="sFriends" (ngModelChange)="onFriendSelected(sFriends)">
+      <select [(ngModel)]="sFriends" (ngModelChange)="onFriendSelected(sFriends)" class="friend-select">
         <option *ngFor="let friend of friendsUserId" [value]="friend">{{ friend }}</option>
       </select>
     </div>
-  
+    
+    <label for="dropDown">Select a playlist:</label>
     <form>
       <select [(ngModel)]="selectedPlaylistF" name="dropDown" (ngModelChange)="onPlaylistSelected(selectedPlaylistF)">
         <option *ngFor="let playlist of Fplaylists" [value]="playlist.name">

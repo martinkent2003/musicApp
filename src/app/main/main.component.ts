@@ -2,7 +2,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, concatMap, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { SpotifyService } from 'src/spotifyservice';
 import { from } from 'rxjs';
 import { all } from 'axios';
@@ -140,87 +140,7 @@ export class MainComponent implements OnInit {
         }
 
         if (this.randomActualSongs?.songs) {
-          const song = this.randomActualSongs.songs[this.myNumber];
-          if (song) {
-            const songContainer = document.createElement('div');
-            songContainer.classList.add('song-container');
-
-            const songImage = document.createElement('img');
-            songImage.src = song.imageUrl;
-
-            const audioPlayer = document.createElement('audio');
-            audioPlayer.controls = true;
-            audioPlayer.src = song.audioUrl;
-            audioPlayer.style.position = 'absolute';
-            audioPlayer.style.left = '820px';
-            audioPlayer.style.top = '280px';
-
-            const buttonsContainer = document.createElement('div');
-            buttonsContainer.style.position = 'relative';
-            buttonsContainer.style.display = 'flex';
-            buttonsContainer.style.flexDirection = 'column';
-            buttonsContainer.classList.add('buttons-container');
-
-            const likeButton = document.createElement('button');
-            likeButton.innerText = 'Like';
-            likeButton.style.position = 'absolute';
-            likeButton.style.bottom = '0';
-            likeButton.style.right = '0';
-
-            likeButton.addEventListener('click', () => {
-              this.addSong(song.id, this.selectedGroupID);
-
-              this.arbAddSongs[0] = song;
-              const songsA = {
-                uris: this.arbAddSongs.map(
-                  (song) => `spotify:track:${song.id}`
-                ),
-              };
-              if (this.selectedGroupPlaylist) {
-                this.spotifyService
-                  .addSongs(this.user, this.selectedGroupPlaylist.id, songsA)
-                  .subscribe((response) => {});
-              }
-              if (this.randomActualSongs?.songs) {
-                // Increment myNumber to get the next song
-                this.myNumber =
-                  (this.myNumber + 1) % this.randomActualSongs?.songs.length;
-                // Remove the current song container
-                songContainer.remove();
-                // Display the next song
-                this.displaySong();
-              }
-            });
-
-            const dislikeButton = document.createElement('button');
-            dislikeButton.innerText = 'Dislike';
-            dislikeButton.style.position = 'absolute';
-            dislikeButton.style.bottom = '0';
-            dislikeButton.style.left = '0';
-            dislikeButton.addEventListener('click', () => {
-              if (this.randomActualSongs?.songs) {
-                // Increment myNumber to get the next song
-                this.myNumber =
-                  (this.myNumber + 1) % this.randomActualSongs.songs.length;
-                // Remove the current song container
-                songContainer.remove();
-                // Display the next song
-                this.displaySong();
-              }
-            });
-
-            buttonsContainer.appendChild(likeButton);
-            buttonsContainer.appendChild(dislikeButton);
-
-            songContainer.appendChild(audioPlayer);
-            songContainer.appendChild(songImage);
-            //songContainer.appendChild(audioPlayer);
-            songContainer.appendChild(buttonsContainer);
-
-            playlistContainer.appendChild(songContainer);
-          }
-        } else {
-          console.error('this.randomActualSongs.songs is undefined');
+             this.displaySong();
         }
       });
   }
@@ -239,33 +159,37 @@ export class MainComponent implements OnInit {
 
       const songContainer = document.createElement('div');
       songContainer.classList.add('song-container');
-
+      
+      const songImageContainer = document.createElement('div');
+      songImageContainer.style.position = 'relative';
+      
       const songImage = document.createElement('img');
       songImage.src = song.imageUrl;
-
+      
       const audioPlayer = document.createElement('audio');
       audioPlayer.controls = true;
       audioPlayer.src = song.audioUrl;
       audioPlayer.style.position = 'absolute';
-      audioPlayer.style.left = '820px';
-      audioPlayer.style.top = '280px';
-
-      const buttonContainer = document.createElement('div');
-      buttonContainer.style.position = 'relative'; // Position the button container relative to the song container
-      buttonContainer.style.display = 'flex';
-      buttonContainer.style.justifyContent = 'space-between'; // Position the buttons at the ends of the button container
-      buttonContainer.style.width = '100%'; // Make the button container the same width as the song image
-
+      audioPlayer.style.top = '-40px'; // Move the player up by 40px
+      audioPlayer.style.left = '50%'; // Move the player to the center
+      audioPlayer.style.transform = 'translateX(-50%)'; // Center the player horizontally
+      
+      songImageContainer.appendChild(songImage);
+      songImageContainer.appendChild(audioPlayer);
+      
+      const buttonsContainer = document.createElement('div');
+      buttonsContainer.style.position = 'relative';
+      buttonsContainer.style.display = 'flex';
+      buttonsContainer.style.flexDirection = 'column';
+      buttonsContainer.classList.add('buttons-container');
+      
       const likeButton = document.createElement('button');
       likeButton.innerText = 'Like';
-      likeButton.style.position = 'absolute'; // Position the like button absolute to the button container
-      likeButton.style.bottom = '0'; // Position the like button at the bottom of the button container
-      likeButton.style.right = '0'; // Position the like button at the right of the button container
-
-      console.log('THIS SHOULD RUN', this.selectedGroupPlaylist);
-
+      likeButton.style.position = 'absolute';
+      likeButton.style.bottom = '0';
+      likeButton.style.right = '0';
       likeButton.addEventListener('click', () => {
-        console.log('LIKE BUTTON CLICKED');
+          console.log('LIKE BUTTON CLICKED');
         this.addSong(song.id, this.selectedGroupID);
 
         this.arbAddSongs[0] = song;
@@ -281,25 +205,25 @@ export class MainComponent implements OnInit {
             .addSongs(this.user, this.selectedGroupPlaylist.id, songsA)
             .subscribe((response) => {});
         }
-
         if (this.randomActualSongs) {
-          // Increment myNumber to get the next song
-          this.myNumber =
-            (this.myNumber + 1) % this.randomActualSongs.songs.length;
-          // Remove the current song container
-          songContainer.remove();
-          // Display the next song
-          this.displaySong();
-        }
-      });
+        // Increment myNumber to get the next song
+        this.myNumber =
+          (this.myNumber + 1) % this.randomActualSongs.songs.length;
+        // Remove the current song container
+        songContainer.remove();
+        // Display the next song
+        this.displaySong();
+      }
 
+      });
+      
       const dislikeButton = document.createElement('button');
       dislikeButton.innerText = 'Dislike';
-      dislikeButton.style.position = 'absolute'; // Position the dislike button absolute to the button container
-      dislikeButton.style.bottom = '0'; // Position the dislike button at the bottom of the button container
-      dislikeButton.style.left = '0'; // Position the dislike button at the left of the button container
+      dislikeButton.style.position = 'absolute';
+      dislikeButton.style.bottom = '0';
+      dislikeButton.style.left = '0';
       dislikeButton.addEventListener('click', () => {
-        if (this.randomActualSongs) {
+          if (this.randomActualSongs) {
           // Increment myNumber to get the next song
           this.myNumber =
             (this.myNumber + 1) % this.randomActualSongs.songs.length;
@@ -307,21 +231,22 @@ export class MainComponent implements OnInit {
           songContainer.remove();
           // Display the next song
           this.displaySong();
-        }
+  }
       });
-
-      buttonContainer.appendChild(likeButton);
-      buttonContainer.appendChild(dislikeButton);
-
-      songContainer.appendChild(audioPlayer);
-      songContainer.appendChild(songImage);
-      songContainer.appendChild(buttonContainer);
-
+      
+      buttonsContainer.appendChild(likeButton);
+      buttonsContainer.appendChild(dislikeButton);
+      
+      songContainer.appendChild(songImageContainer);
+      songContainer.appendChild(buttonsContainer);
+      
       playlistContainer.appendChild(songContainer);
+      
     } else {
       console.error('Error: No songs found in this.randomActualSongs');
     }
   }
+
 
   constructor(
     private router: Router,
@@ -399,6 +324,7 @@ export class MainComponent implements OnInit {
       //admin is the user who created the group -
       users: [this.user],
       playlist: this.createdPlaylistID, // name of the blended playlist from user input
+      playlistID: this.playlistName 
       //have the defualt liked songs be the blended playlist
     };
 
@@ -429,8 +355,9 @@ export class MainComponent implements OnInit {
       );
   }
 
-  submitPlaylistName(): void {
-    console.log(this.playlistName);
+  submitPlaylistName(){
+    console.log("Error group Name: ", this.groupName)
+    console.log("Error playlist Name: ", this.playlistName)
     const url = `http://localhost:8000/userUpdatePlaylists/`;
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
     const options = { headers: headers };
@@ -447,62 +374,51 @@ export class MainComponent implements OnInit {
   }
 
   addFriendToGroup() {
-    if (this.selectedFriend) {
-      this.groupMembers.push(this.selectedFriend); // I think this is pointless
+    if (this.selectedFriend && this.groupMembers.indexOf(this.selectedFriend) === -1) {
+      this.groupMembers.push(this.selectedFriend); 
     }
 
+  }
+
+
+
+  addFriendToGroup2() {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const options = { headers: headers };
-
-    console.log(this.selectedFriend);
-    const friendData = {
-      groupID: this.groupName,
-      users: [this.selectedFriend], // change to singular name intead of this.friendsUserId
-    };
-
-    const grpData = {
-      userID: this.selectedFriend,
-      groups: [this.groupName], // change to singular name intead of this.friendsUserId
-    };
-
-    this.http
-      .put<Group>('http://localhost:8000/userUpdateGroups/', grpData, options) // adds groups to friends group list
-      .subscribe(
-        (res) => console.log(res),
-        (err) => console.log(err)
-      );
-
-    this.http
-      .put<Group>(
-        'http://localhost:8000/groupUpdateUsers/',
-        friendData,
-        options
-      )
-      .subscribe(
-        (res) => console.log(res),
-        (err) => console.log(err)
-      );
+  
+    from(this.groupMembers).pipe(
+      concatMap((member) => {
+        console.log('MEMBER FOUND THAT SHOULD BE IN GROUP AND USER SHOULD HAVE IN THEIR GROUPS', member);
+        const friendData = {
+          groupID: this.groupName,
+          users: [member],
+        };
+  
+        const grpData = {
+          userID: member,
+          groups: [this.groupName],
+        };
+  
+        return forkJoin([
+          this.http.put<Group>('http://localhost:8000/userUpdateGroups/', grpData, options),
+          this.http.put<Group>('http://localhost:8000/groupUpdateUsers/', friendData, options),
+        ]);
+      })
+    ).subscribe(
+      (res) => console.log(res),
+      (err) => console.log(err)
+    );
   }
-
-  addFriendsToGroup(): void {
-    // adds friends selected to group using a put request to database
-    // const body = {
-    //   groupID: this.,
-    //   users: this.selectedFriendsForGroup
-    // };
-    // const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    // const options = { headers: headers };
-    // this.http.post<Group>('http://localhost:8000/groupPost', body, options)
-    //   .subscribe(
-    //       (res) => console.log(res),
-    //       (err) => console.log(err)
-    //   );
-  }
+  
+  
 
   // CHNAGE NEEDS TO HAPPEND FROM HERE AND ABOVE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   async getUserData() {
     // ADD ALL OF THE SONGS ADDED TO PLAYLIST TO THE MATCHED SONGS ARRAY - done
+    await this.submitGroupName();
+    await this.addFriendToGroup2();
+
 
     this.spotifyService
       .createPlaylist(this.playlistName, this.userIds, this.user)
@@ -629,6 +545,7 @@ export class MainComponent implements OnInit {
   }
 
   justGetGroups(): void {
+    this.allOfMyGroups = [];
     console.log(this.allOfMyGroupNames);
     for (const groupName of this.allOfMyGroupNames) {
       const url = `http://localhost:8000/groupPost/${groupName}`;
@@ -643,100 +560,77 @@ export class MainComponent implements OnInit {
   groupMatchedSongs: string[] = [];
   notInPlaylist: string[] = [];
 
-  getAllGroups(): void {
-    // add functionality to check if the users playlist exists in their spotify account if not create it. If it is there then dipslay what songs differ between there playlist and matched and have a button to add those songs into playlist accordingly.
+  async getAllGroups(): Promise<void> {
     console.log(this.allOfMyGroupNames);
     for (const groupName of this.allOfMyGroupNames) {
       const url = `http://localhost:8000/groupPost/${groupName}`;
-      this.http.get<Group>(url).subscribe(
-        (group: Group) => {
-          this.allOfMyGroups.push(group);
-          this.groupMatchedSongs = group.matched;
-          this.playlistExists = false;
-          console.log(groupName);
-          for (let playlist of this.playlists) {
-            if (playlist.name === group.playlistID) {
-              console.log('Else ran - playlist exists');
-              this.playlistExists = true;
+      try {
+    
+        const group: Group | undefined = await this.http.get<Group>(url).toPromise();
+        if(group) {
+      
+        this.allOfMyGroups.push(group);
+        this.groupMatchedSongs = group.matched;
+        this.playlistExists = false;
+        console.log(groupName);
+        for (let playlist of this.playlists) {
+          if (playlist.name === group.playlistID) {
+            console.log('Else ran - playlist exists');
+            this.playlistExists = true;
+          }
+        }
+        console.log(this.playlistExists);
+        if (this.playlistExists === false) {
+          console.log('If ran - playlist does not exist');
+          await this.spotifyService.createPlaylist(group.playlistID, this.userIds, this.user);
+          const playlists = await this.spotifyService.getPlaylists(this.user).toPromise();
+          if (playlists) {
+            this.playlists = playlists;
+          } 
+          const selectedPlaylist = this.playlists.find((playlist) => playlist.name === group.playlistID);
+          console.log('found playlist after creating it: ', selectedPlaylist);
+          this.createdPlaylistID = selectedPlaylist?.id || 'defaultPlaylistId';
+          console.log('created Playlist ID', this.createdPlaylistID);
+          console.log('songs in Database: ', this.groupMatchedSongs);
+          const songsA = {
+            uris: group.matched.map((song) => `spotify:track:${song}`),
+          };
+          await this.spotifyService.addSongs(this.user, this.createdPlaylistID, songsA).toPromise();
+        } else {
+          const playlists = await this.spotifyService.getPlaylists(this.user).toPromise();
+          if (playlists) {
+            this.playlists = playlists;
+          } 
+          console.log(this.playlistName);
+          const selectedPlaylist = this.playlists.find((playlist) => playlist.name === group.playlistID);
+          this.createdPlaylistID = selectedPlaylist?.id || 'defaultPlaylistId';
+          console.log('created Playlist ID', this.createdPlaylistID);
+          if (selectedPlaylist) {
+            console.log('THIS RAN');
+            const allSongs = await this.spotifyService.getSongs(this.user, this.createdPlaylistID).toPromise();
+            console.log('All songs in playlist:', allSongs);
+            if(allSongs){            
+            this.notInPlaylist = group.matched.filter((songID) => !allSongs.some((song) => song.id === songID)).map((songName) => `spotify:track:${songName}`);
+            }
+            const songsA = {
+              uris: this.notInPlaylist,
+            };
+            console.log('Songs not in playlist ', selectedPlaylist.name, ' :', this.notInPlaylist);
+            if (this.createdPlaylistID && songsA.uris.length > 0) {
+              console.log('Songs were added to playlist');
+              await this.spotifyService.addSongs(this.user, this.createdPlaylistID, songsA).toPromise();
+              console.log('NO ERROR TO ADDING SONGS');
             }
           }
-
-          console.log(this.playlistExists);
-
-          if (this.playlistExists === false) {
-            console.log('If ran - playlist does not exist');
-            this.spotifyService
-              .createPlaylist(group.playlistID, this.userIds, this.user)
-              .then(() => {
-                this.spotifyService
-                  .getPlaylists(this.user)
-                  .subscribe((playlists) => {
-                    this.playlists = playlists;
-                    const selectedPlaylist = this.playlists.find(
-                      (playlist) => playlist.name === group.playlistID
-                    );
-                    console.log(
-                      'found playlist after creating it: ',
-                      selectedPlaylist
-                    );
-                    this.createdPlaylistID =
-                      selectedPlaylist?.id || 'defaultPlaylistId';
-                    console.log('created Playlist ID', this.createdPlaylistID);
-                    console.log('songs in Database: ', this.groupMatchedSongs);
-                    const songsA = {
-                      uris: this.groupMatchedSongs.map(
-                        (song) => `spotify:track:${song}`
-                      ),
-                    };
-                    this.spotifyService
-                      .addSongs(this.user, this.createdPlaylistID, songsA)
-                      .subscribe((response) => {});
-                  });
-              });
-          } else {
-            this.spotifyService
-              .getPlaylists(this.user)
-              .subscribe((playlists) => {
-                this.playlists = playlists;
-                console.log(this.playlistName);
-                const selectedPlaylist = this.playlists.find(
-                  (playlist) => playlist.name === group.playlistID
-                );
-                this.createdPlaylistID =
-                  selectedPlaylist?.id || 'defaultPlaylistId';
-                console.log('created Playlist ID', this.createdPlaylistID);
-                if (selectedPlaylist) {
-                  // error here
-                  console.log('THIS RAN'); //  PLAYLIST IS NOT ABLE TO EXTRACT THE SONGS FROM THE PLAYLIST need to fix this
-                  this.spotifyService
-                    .getSongs(this.user, this.createdPlaylistID)
-                    .subscribe((allSongs) => {
-                      console.log('All songs in playlist:', allSongs); // LEFT OFF HERE
-                      this.notInPlaylist = this.groupMatchedSongs
-                        .filter(
-                          (songID) =>
-                            !allSongs.some((song) => song.id === songID)
-                        )
-                        .map((songName) => `spotify:track:${songName}`);
-                      const songsA = {
-                        uris: this.notInPlaylist,
-                      };
-                      console.log('Songs not in playlist:', this.notInPlaylist);
-                      if (this.createdPlaylistID && songsA.uris.length > 0) {
-                        console.log('Songs were added to playlist');
-                        this.spotifyService
-                          .addSongs(this.user, this.createdPlaylistID, songsA)
-                          .subscribe((response) => {});
-                      }
-                    });
-                }
-              });
-          }
-        },
-        (error: any) => console.log(error)
-      );
+        }
+      }
+      } catch (error) {
+        console.log(error);
+      }
+      
     }
   }
+  
 
   getUser(): Observable<boolean> {
     const url = `http://localhost:8000/userPost/${this.user}`;
@@ -810,117 +704,6 @@ export class MainComponent implements OnInit {
       );
   }
 
-  onSubmit() {
-    // displays the songs and makes post request
-
-    this.spotifyService
-      .getRandomSongsFromRapCategory()
-      .subscribe((playlists) => {
-        // PRETTY CONFIDENT ABT THIS BUT NOT ANYTHING ELSE
-        this.randomP = playlists;
-
-        const firstPlaylist = this.randomP[0];
-
-        console.log(firstPlaylist); //does not work during first try - works second try
-        console.log(firstPlaylist.songs);
-
-        const playlistContainer = document.querySelector('.song-card');
-        this.randomActualSongs = this.randomP[0]; // something wrong here
-
-        console.log(this.randomActualSongs.songs); //does not work at all
-
-        //ERROR HERE:  this.randomP does not update immdietly for use afterwards. this.randomActual songs also does not update immdietly for use afterwards. please fix this code
-
-        if (!playlistContainer) {
-          console.error('No .playlist-container element was found in the DOM.');
-          return;
-        }
-
-        if (this.randomActualSongs?.songs) {
-          const song = this.randomActualSongs.songs[this.myNumber];
-          if (song) {
-            console.log('RAN ONCE');
-            const songContainer = document.createElement('div');
-            songContainer.classList.add('song-container');
-
-            const songImage = document.createElement('img');
-            songImage.src = song.imageUrl;
-
-            const audioPlayer = document.createElement('audio');
-            audioPlayer.controls = true;
-            audioPlayer.src = song.audioUrl;
-            audioPlayer.style.position = 'absolute';
-            audioPlayer.style.left = '820px';
-            audioPlayer.style.top = '280px';
-
-            const buttonsContainer = document.createElement('div');
-            buttonsContainer.style.position = 'relative';
-            buttonsContainer.style.display = 'flex';
-            buttonsContainer.style.flexDirection = 'column';
-            buttonsContainer.classList.add('buttons-container');
-
-            const likeButton = document.createElement('button');
-            likeButton.innerText = 'Like';
-            likeButton.style.position = 'absolute';
-            likeButton.style.bottom = '0';
-            likeButton.style.right = '0';
-            likeButton.addEventListener('click', () => {
-              this.addSong(song.id, this.selectedGroupID);
-
-              this.arbAddSongs[0] = song;
-              const songsA = {
-                uris: this.arbAddSongs.map(
-                  (song) => `spotify:track:${song.id}`
-                ),
-              };
-              if (this.selectedGroupPlaylist) {
-                this.spotifyService
-                  .addSongs(this.user, this.selectedGroupPlaylist.id, songsA)
-                  .subscribe((response) => {});
-              }
-              if (this.randomActualSongs?.songs) {
-                // Increment myNumber to get the next song
-                this.myNumber =
-                  (this.myNumber + 1) % this.randomActualSongs?.songs.length;
-                // Remove the current song container
-                songContainer.remove();
-                // Display the next song
-                this.displaySong();
-              }
-            });
-
-            const dislikeButton = document.createElement('button');
-            dislikeButton.innerText = 'Dislike';
-            dislikeButton.style.position = 'absolute';
-            dislikeButton.style.bottom = '0';
-            dislikeButton.style.left = '0';
-            dislikeButton.addEventListener('click', () => {
-              if (this.randomActualSongs?.songs) {
-                // Increment myNumber to get the next song
-                this.myNumber =
-                  (this.myNumber + 1) % this.randomActualSongs.songs.length;
-                // Remove the current song container
-                songContainer.remove();
-                // Display the next song
-                this.displaySong();
-              }
-            });
-
-            buttonsContainer.appendChild(likeButton);
-            buttonsContainer.appendChild(dislikeButton);
-
-            songContainer.appendChild(audioPlayer);
-            songContainer.appendChild(songImage);
-            //songContainer.appendChild(audioPlayer);
-            songContainer.appendChild(buttonsContainer);
-
-            playlistContainer.appendChild(songContainer);
-          }
-        } else {
-          console.error('this.randomActualSongs.songs is undefined');
-        }
-      });
-  }
 
   navigateToNewScreen() {
     this.router.navigate(['/home-screen']);
