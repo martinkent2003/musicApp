@@ -1,11 +1,18 @@
-.instructions {
-  /* Add padding to the left side of the instructions section */
-  padding-left: 20px; /* adjust the padding value as needed */
+@media screen and (max-width: 600px) {
+  body {
+    height: auto;
+  }
+  .instructions {
+    max-height: none;
+  }
+}
 
-  /* Set the position to fixed and center the element horizontally */
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
+.instructions {
+  position: static;
+  max-height: 500px;
+  overflow-y: auto;
+  margin: 0 auto;
+  width: 50%; /* adjust the value as needed */
 }
 
 /* Styling for paragraph inside instructions section */
