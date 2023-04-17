@@ -180,7 +180,7 @@ func TestUpdatePlaylistName(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(getGroups)
+	handler := http.HandlerFunc(updatePlaylistName)
 	handler.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
@@ -189,6 +189,7 @@ func TestUpdatePlaylistName(t *testing.T) {
 
 	expected := entity.Group{}
 	json.Unmarshal(rr.Body.Bytes(), &expected)
+
 	if expected.GroupID != "finalSprintGroupTesting" {
 		t.Errorf("handler returned unexpected body: got %v want group with playlistID update-name",
 			expected)
