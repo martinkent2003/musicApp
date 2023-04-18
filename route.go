@@ -409,12 +409,9 @@ func updateUserGroups(resp http.ResponseWriter, req *http.Request) {
 
 	user.Groups = removeDuplicates(user.Groups)
 
-	//user.Groups = removeDuplicates(user.Groups)
-
 	// keep old user data for fields not being updated
 	user.Friends = userFromDB.Friends
 	user.LikedSong = userFromDB.LikedSong
-	user.GroupAdmin = userFromDB.GroupAdmin
 
 	userRepo.Update(&user)
 	resp.WriteHeader(http.StatusOK)
@@ -476,7 +473,6 @@ func updateUserFriends(resp http.ResponseWriter, req *http.Request) {
 
 	// keep old user data for fields not being updated
 	user.LikedSong = userFromDB.LikedSong
-	user.GroupAdmin = userFromDB.GroupAdmin
 	user.Groups = userFromDB.Groups
 
 	userRepo.Update(&user)
