@@ -85,6 +85,7 @@ export class MainComponent implements OnInit {
   showGroupList: boolean = false;
   songIDs: string[] = [];
   selectedGroupPlaylist: Playlist | undefined;
+  userNames: string[] = [];
 
   //nameInput: any;
 
@@ -662,6 +663,16 @@ export class MainComponent implements OnInit {
     );
   }
 
+  getDbUsers(){
+    this.http.get<any[]>('http://localhost:8000/userPost').subscribe(response => {
+      for (let i = 0; i < response.length; i++) {
+        this.userNames.push(response[i].userID);
+      }
+      console.log(this.userNames); // prints ["test-sprint4", "shafdor"]
+    });
+
+  }
+
   handleAuth() {
     // NEXT CHANGE HERE
     this.spotifyService.handleAuthorizationResponse().then(() => {
@@ -677,6 +688,8 @@ export class MainComponent implements OnInit {
               console.log('User does not exist');
             }
             this.getAllGroups();
+            this.getDbUsers();
+
 
             // CHECK IF PLAYLIST EXISTS OR NOT
 

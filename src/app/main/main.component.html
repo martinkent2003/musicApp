@@ -27,13 +27,13 @@
   </ul>
 </div>
 
-<input
-#nameInput
-type="text"
-(keyup.enter)="addFriend(nameInput.value); nameInput.value = ''"
-/>
+<select #nameSelect>
+  <option disabled selected value="">Add a friend</option>
+  <option *ngFor="let name of userNames" [value]="name">{{name}}</option>
+</select>
 
-<button (click)="addFriend(nameInput.value)">Add Friend</button>
+<button (click)="addFriend(nameSelect.value)">Add Friend</button>
+
 
 
 <h3>My Friends</h3>
