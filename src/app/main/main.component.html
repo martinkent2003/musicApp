@@ -1,5 +1,6 @@
 <!-- main.component.html -->
 
+<!-- Login/ Link Spotify Buttons -->
 <div class="button-container">
   <button (click)="redirectToSpotifyAPI()" id="redirect-button">
     Link Spotify
@@ -7,34 +8,53 @@
   <button (click)="handleAuth()" id="login-button">Login</button>
 </div>
 
+<!-- Welcome Message to user -->
 <div class="welcome" *ngIf="user">
   <h2>Welcome {{ user }}, let's get blending...</h2>
 </div>
 
+<!-- Party/Group Table -->
 <div class="group-list" *ngIf="showGroupList">
-  <h3>My Groups</h3>
-  <ul>
-    <li *ngFor="let group of allOfMyGroups">
-      {{ group.groupID }} - {{ group.users.join(", ") }} -
-      {{ group.playlistID }}
-    </li>
-  </ul>
+  <h3>My Parties</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Party Name</th>
+        <th>Users</th>
+        <th>Playlist Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let group of allOfMyGroups">
+        <td>{{ group.groupID }}</td>
+        <td>{{ group.users.join(", ") }}</td>
+        <td>{{ group.playlistID }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
-<select #nameSelect>
-  <option disabled selected value="">Add a friend</option>
-  <option *ngFor="let name of userNames" [value]="name">{{name}}</option>
-</select>
+<!-- Add Friend from member in database -->
+<div class="add-friend">
+  <label for="nameSelect">Add a friend:</label>
+  <select id="nameSelect" #nameSelect>
+    <option disabled selected value="">Member List</option>
+    <option *ngFor="let name of userNames" [value]="name">{{ name }}</option>
+  </select>
+  <button (click)="addFriend(nameSelect.value)">Add Friend</button>
+</div>
 
-<button (click)="addFriend(nameSelect.value)">Add Friend</button>
+<!-- View Friends -->
+<div class="friend-view" *ngIf="friendsUserId.length > 0">
+  <h3>My Friends</h3>
+  <div class="friend-list">
+    <div *ngFor="let friend of friendsUserId" class="friend-item">
+      {{ friend }}
+    </div>
+  </div>
+</div>
 
-
-
-<h3>My Friends</h3>
-<ul>
-  <li *ngFor="let friend of friendsUserId">{{ friend }}</li>
-</ul>
-
+<!-- Group/ Party Functionality -->
 <div>
   <button (click)="createNewGroup()">Create a Group</button>
 </div>
