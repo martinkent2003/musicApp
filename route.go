@@ -250,6 +250,18 @@ func putGroup(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(group)
 }
 
+/*
+updatePlaylistName updates the name of a group in the database by taking the new playlist name as input from the request body,
+finding the group with the provided groupID, and updating its name in the database.
+The function does not return anything, it updates the group's playlisy name in the database and
+sends a response to the client in JSON format.
+The function follows these steps:
+1. Decode the request body JSON into the entity.Group struct.
+2. If there is an error during unmarshalling, set the response status to 500 (Internal Server Error), write an error message to the response body, and return.
+3. Find the group with the provided groupID from the group repository.
+4. Update the group with the new playlist name, and set the rest of the values to be the values within the database.
+5. Write the updated group information to the response body in JSON format.
+*/
 func updatePlaylistName(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var group entity.Group
@@ -338,6 +350,13 @@ func updateGroupUsers(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(group)
 }
 
+/*
+THe function removes duplicate elements from a slice of strings.
+The function takes in a slice of strings and returns a slice of strings with no duplicates.
+It helps to remove duplicate users from a group as sometimes it can be
+done unintentionally.
+*/
+
 func removeDuplicates(s []string) []string {
 	seen := make(map[string]bool)
 	j := 0
@@ -353,6 +372,13 @@ func removeDuplicates(s []string) []string {
 
 	return s
 }
+
+/*
+The function deletes a user with the given ID from the user Repository
+The function takes in a response writer and a request as parameters.
+The function does not return anything, it deletes the user from the database and
+sends a response to the client in JSON format.
+*/
 
 func deleteUser(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
@@ -384,6 +410,16 @@ func deleteGroup(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode("Group deleted successfully")
 }
 
+/*
+The function updates the groups of a user.
+The function takes in a response writer and a request as parameters.
+The function does not return anything, it updates the groups of the user in the database and
+sends a response to the client in JSON format.
+It does so by getting the user from the database, adding the new groups to the user and
+keeping the rest of the values the same as what they were in the database.
+Additionally, it removes any duplicates from the groups array to ensure
+that there are not multiple instances of the same group for a user.
+*/
 func updateUserGroups(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var user entity.User
@@ -417,6 +453,22 @@ func updateUserGroups(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode(user)
 }
+
+/*
+The function updates the friends of a user.
+The function takes in a response writer and a request as parameters.
+The function does not return anything, it updates the friends of the user in the database and
+sends a response to the client in JSON format.
+It does so by getting the user from the database, adding the new friends to the user and
+keeping the rest of the values the same as what they were in the database because only the friends
+are being updated for the user.
+Additionally, it removes any duplicates from the friends array to ensure
+that there are not multiple instances of the same friend for a user as that would
+lead to confusion for when a person tries to choose a friend in the app.
+Also, the function checks to see that the friends that are being added to the user
+are actual members of the application to ensure that random users
+and random names are not being put into the databse as they carry no information.
+*/
 
 func updateUserFriends(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")

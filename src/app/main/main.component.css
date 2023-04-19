@@ -62,11 +62,115 @@
   }
 }
 
-/*------------ login.component.css/ idk ------------*/
+/*------------ Welcome Message to user ------------*/
 .welcome {
   text-align: center;
+  padding: 15px;
+}
+
+.welcome h2 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/*------------ Party/Group Table ------------*/
+
+.group-list {
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #727272;
   color: white;
 }
+
+tr:nth-child(even) {
+  background-color: #333;
+}
+
+/*------------ Add friend from member in database ------------*/
+.add-friend {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 40px auto 0;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-friend label {
+  display: block;
+  margin-bottom: 10px;
+  flex: 1;
+  text-align: right;
+}
+
+.add-friend select,
+.add-friend button {
+  font-size: 16px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  flex: 2;
+}
+
+.add-friend select {
+  width: 100%;
+  margin-right: 10px;
+}
+
+.add-friend button {
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.add-friend button:hover {
+  background-color: #0062cc;
+}
+
+/*------------ View Friends ------------*/
+.friend-view {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.friend-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.friend-item {
+  padding: 10px 20px;
+  background-color: #49484894;
+  border-radius: 5px;
+  margin: 5px;
+  font-size: 16px;
+}
+
+/*------------ idk ------------*/
 
 .form-container {
   display: flex;
@@ -99,13 +203,6 @@
   cursor: pointer;
 }
 
-/* ------ TODO: style for reminders on literal UI ------*/
-#TODO {
-  font-size: 12px;
-  color: #999;
-  margin-top: 5px;
-}
-
 .group-form {
   border: 1px solid #ccc;
   padding: 10px;
@@ -120,4 +217,3 @@
 .friend-select {
   margin-bottom: 10px;
 }
-

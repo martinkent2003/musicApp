@@ -1,0 +1,58 @@
+/* about.component.css */
+
+/* Set up the section container */
+.about-us {
+  display: flex; /* Use flexbox layout */
+  flex-direction: column; /* Lay out the child elements in a column */
+  justify-content: center; /* Center the child elements vertically */
+  align-items: center; /* Center the child elements horizontally */
+  padding-top: 20px; /* Add space between the top of the section and the navigation bar */
+}
+
+/* Style the main heading */
+h1 {
+  font-size: 32px; /* Set font size to 32 pixels */
+  font-weight: bold; /* Use bold font weight */
+  text-align: center; /* Center the text horizontally */
+  margin-bottom: 32px; /* Add space between the heading and the paragraphs below */
+}
+
+/* Style the secondary headings */
+h2 {
+  font-size: 24px; /* Set font size to 24 pixels */
+  font-weight: bold; /* Use bold font weight */
+  text-align: center; /* Center the text horizontally */
+  margin-top: 42px; /* Add space between the paragraphs above and the heading */
+  margin-bottom: 32px; /* Add space between the heading and the paragraphs below */
+}
+
+/* Style the paragraphs */
+p {
+  font-size: 18px; /* Set font size to 18 pixels */
+  text-align: center; /* Center the text horizontally */
+  margin-bottom: 32px; /* Add space between the paragraphs */
+  line-height: 1.5; /* Set line height to 1.5 times the font size */
+}
+
+/* Set up the grid for the team members */
+.team-members {
+  display: grid; /* Use CSS grid layout */
+  grid-template-columns: repeat(2, 1fr); /* Create two equal-sized columns */
+  grid-gap: 20px; /* Add space between the grid items */
+}
+
+/* Set up the individual team member cards */
+.member {
+  display: flex; /* Use flexbox layout */
+  flex-direction: column; /* Lay out the child elements in a column */
+  align-items: center; /* Center the child elements horizontally */
+  text-align: center; /* Center the text horizontally */
+}
+
+/* Style the team member images */
+.member img {
+  width: 50%; /* Set the width of the image to 50% of its container */
+  height: auto; /* Maintain the aspect ratio of the image */
+  object-fit: cover; /* Scale the image to fill the container while maintaining aspect ratio */
+  object-position: center; /* Center the image within its container */
+}
