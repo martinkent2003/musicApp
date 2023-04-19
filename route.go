@@ -410,6 +410,16 @@ func deleteGroup(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode("Group deleted successfully")
 }
 
+/*
+The function updates the groups of a user.
+The function takes in a response writer and a request as parameters.
+The function does not return anything, it updates the groups of the user in the database and
+sends a response to the client in JSON format.
+It does so by getting the user from the database, adding the new groups to the user and
+keeping the rest of the values the same as what they were in the database.
+Additionally, it removes any duplicates from the groups array to ensure
+that there are not multiple instances of the same group for a user.
+*/
 func updateUserGroups(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var user entity.User
