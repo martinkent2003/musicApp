@@ -41,8 +41,3 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Custom
-scratch.css
-
-# Backend Credentials
-vibeshare-c2a22-firebase-adminsdk-mgmto-391ce42959.json
