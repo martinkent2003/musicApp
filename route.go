@@ -457,6 +457,22 @@ func updateUserGroups(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(user)
 }
 
+/*
+The function updates the friends of a user.
+The function takes in a response writer and a request as parameters.
+The function does not return anything, it updates the friends of the user in the database and
+sends a response to the client in JSON format.
+It does so by getting the user from the database, adding the new friends to the user and
+keeping the rest of the values the same as what they were in the database because only the friends
+are being updated for the user.
+Additionally, it removes any duplicates from the friends array to ensure
+that there are not multiple instances of the same friend for a user as that would
+lead to confusion for when a person tries to choose a friend in the app.
+Also, the function checks to see that the friends that are being added to the user
+are actual members of the application to ensure that random users
+and random names are not being put into the databse as they carry no information.
+*/
+
 func updateUserFriends(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var user entity.User
