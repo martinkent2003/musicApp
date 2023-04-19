@@ -15,8 +15,8 @@ Steps to run locally:
 - Open your Firestone database and get JSON google credentials and store in a separate section of your local drive
 - Run in CLI `export GOOGLE_APPLICATION_CREDENTIALS=path/to/JSON`
 - Run in CLI `go build`
-- Run in CLI ‘go run *` to host server
-- Run in CLI ‘npm start`
+- Run in CLI  `go run *` to host server
+- Run in CLI `npm start`
 
 ## Members
 ### Frontend
