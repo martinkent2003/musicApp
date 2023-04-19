@@ -250,6 +250,18 @@ func putGroup(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(group)
 }
 
+/*
+updatePlaylistName updates the name of a group in the database by taking the new playlist name as input from the request body,
+finding the group with the provided groupID, and updating its name in the database.
+The function does not return anything, it updates the group's playlisy name in the database and
+sends a response to the client in JSON format.
+The function follows these steps:
+1. Decode the request body JSON into the entity.Group struct.
+2. If there is an error during unmarshalling, set the response status to 500 (Internal Server Error), write an error message to the response body, and return.
+3. Find the group with the provided groupID from the group repository.
+4. Update the group with the new playlist name, and set the rest of the values to be the values within the database.
+5. Write the updated group information to the response body in JSON format.
+*/
 func updatePlaylistName(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var group entity.Group
