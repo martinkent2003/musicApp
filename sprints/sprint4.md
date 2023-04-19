@@ -15,7 +15,11 @@
 
 ## Unit Tests:
 ### Frontend:
-- niwniog
+- Component Test e2e:
+  - about.cy.js: Tests URL, title, paragraphs, & correct members with images and titles
+  - instructions.cy.js: Tests URL, title, instructions, quotes, & checks if button redirects properly
+  - main.cy.js
+- nav.cy.js: Tests if each button on the navigation bar works
 
 ### Backend:
 - Changed all of the unit tests for the users and groups as the structure of data changed slightly
