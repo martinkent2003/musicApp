@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./about.component.css'],
 })
 export class AboutComponent {
+  // Define an array of team member objects, each with a name, image, and role
   teamMembers = [
     {
       name: 'Michael Shaffer',
@@ -30,3 +31,9 @@ export class AboutComponent {
     },
   ];
 }
+/*
+Due to issues with using PNG images on our website,
+we have decided to host our images on Imgur instead.
+This allows us to display high-quality images without
+ any performance issues or compatibility problems.
+*/

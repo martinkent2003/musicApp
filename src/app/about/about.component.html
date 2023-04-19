@@ -1,23 +1,34 @@
 <!-- about.component.html -->
+
+<!-- Set up the section container -->
 <div class="about-us">
   <h1>About Us</h1>
+  <!-- Display the main heading for the section -->
 
   <p>
+    <!-- Display the first paragraph -->
     We are a team of music enthusiasts who believe that music is the ultimate
     medium for connection and expression.
   </p>
   <p>
+    <!-- Display the second paragraph -->
     Our mission is to create a platform that allows music lovers to connect,
     share, and discover new music together. We believe that music has the power
     to bring people together and create positive change in the world.
   </p>
 
   <h2>Our Team</h2>
+  <!-- Display the secondary heading for the section -->
   <div class="team-members">
+    <!-- Set up the grid for the team members -->
     <div class="member" *ngFor="let member of teamMembers">
+      <!-- Set up the individual team member cards using ngFor loop -->
       <img [src]="member.image" alt="{{ member.name }}" />
+      <!-- Display the team member's image with an alternate text -->
       <h3>{{ member.name }}</h3>
+      <!-- Display the team member's name -->
       <p>{{ member.role }}</p>
+      <!-- Display the team member's role -->
     </div>
   </div>
 </div>
