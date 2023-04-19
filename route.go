@@ -350,6 +350,13 @@ func updateGroupUsers(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(group)
 }
 
+/*
+THe function removes duplicate elements from a slice of strings.
+The function takes in a slice of strings and returns a slice of strings with no duplicates.
+It helps to remove duplicate users from a group as sometimes it can be
+done unintentionally.
+*/
+
 func removeDuplicates(s []string) []string {
 	seen := make(map[string]bool)
 	j := 0
@@ -365,6 +372,13 @@ func removeDuplicates(s []string) []string {
 
 	return s
 }
+
+/*
+The function deletes a user with the given ID from the user Repository
+The function takes in a response writer and a request as parameters.
+The function does not return anything, it deletes the user from the database and
+sends a response to the client in JSON format.
+*/
 
 func deleteUser(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
