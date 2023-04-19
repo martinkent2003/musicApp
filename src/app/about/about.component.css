@@ -1,0 +1,53 @@
+/* about.component.css */
+.about-us {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px; /* Add padding to create space between the h1 and the navigation bar */
+}
+
+/* Style the headings */
+h1 {
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 42px;
+  margin-bottom: 32px;
+}
+
+/* Style the paragraphs */
+p {
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+/* Image layout  */
+.team-members {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+}
+
+.member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.member img {
+  width: 50%;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+}
