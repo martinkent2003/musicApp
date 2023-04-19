@@ -93,12 +93,12 @@ td {
 }
 
 th {
-  background-color: #333;
+  background-color: #727272;
   color: white;
 }
 
 tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: #333;
 }
 
 /*------------ Add friend from member in database ------------*/
