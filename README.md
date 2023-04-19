@@ -6,7 +6,7 @@ VibeShare is a social media application that allows users to collaborate on Spot
 Some of the specific features that the project includes are:
 - Developing group-centered playlists for events
 - Voting on songs or group playlists
-- etc.
+- Connect with other friends who also have Spotify accounts
 
 The goal of VibeShare is to increase the enjoyment level for parties and other events by creating playlists that are designed based on the environment and user similarities.
 

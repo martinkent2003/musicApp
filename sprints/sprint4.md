@@ -12,6 +12,7 @@
 - Streamlined the process on the main page so it is ordered in chronological order for the user to know exactly what their next steps are in the process.
 - The different functions used on the backend to update the user's groups and friends have been changed to append things to the user rather than completely re-write the values and additionally, checks for duplicates to ensure that there is no confusion on the application when trying to retreive information about a user
 - Created checks for certain things like checking if a certain song has been matched or not to ensure that it does not show up again on another person's application when using the Tinder UI to put songs into the playlist.
+- Created about us page to see the members who worked on the project and our mission. 
 
 ## Unit Tests:
 ### Frontend:
