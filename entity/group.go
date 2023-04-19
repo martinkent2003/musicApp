@@ -11,7 +11,8 @@ users in the group who like the song divided by the number of users in the group
 users in the group who like the song divided by the number of users in the group
 - when the ratio of likes/users in SemiMatched goes above a certain threshold, the song is
 removed from SemiMatched and added to Matched, meaning a significant amount of users in the
-group like the song.
+group like the song. (not used in final implementation)
+ignore semi-matched
 */
 type Group struct {
 	GroupID     string             `json:"groupID"`

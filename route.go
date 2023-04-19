@@ -21,6 +21,7 @@ The getGroups function in route.go takes a response writer and request,
 and then calls the FindAll method in groupRepository\groupPost-repo.go
 to get all the groups in the group collection in the firestore database
 */
+
 func getGroups(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	groups, err := groupRepo.FindAll()
@@ -38,6 +39,7 @@ The getGroup function in route.go takes a response writer and request,
 and then calls the FindGroup method in groupRepository\groupPost-repo.go
 to get a specific group in the group collection in the firestore database
 */
+
 func getGroup(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	vars := mux.Vars(req)
@@ -58,6 +60,7 @@ getUser function gets a specific user using the userID.
 It uses the FindUser method in the UserRepository interface to fetch the user from the Firestore database.
 If there is an error, it returns a 500 status code and an error message.
 */
+
 func getUser(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	vars := mux.Vars(req)
@@ -78,6 +81,7 @@ The addGroups function in route.go takes a response writer and request,
 and then calls the Save method in groupRepository\groupPost-repo.go
 to add a group to the group collection in the firestore database
 */
+
 func addGroups(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var group entity.Group
@@ -97,6 +101,7 @@ The getUsers function gets all the users from the userRepo and returns them as a
 It uses the FindAll method in the UserRepository interface to fetch the users from the Firestore database.
 If there is an error, it returns a 500 status code and an error message.
 */
+
 func getUsers(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	users, err := userRepo.FindAll()
@@ -114,6 +119,7 @@ addUsers function adds a new user to the userRepo.
 It uses the Save method in the UserRepository interface to save the user to the Firestore database.
 If there is an error, it returns a 500 status code and an error message.
 */
+
 func addUsers(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var user entity.User
@@ -160,6 +166,7 @@ putUsers function updates a pre-existing user to the userRepo.
 It uses the Save method in the UserRepository interface to save the user to the Firestore database.
 If there is an error, it returns a 500 status code and an error message.
 */
+
 func putUsers(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var user entity.User
@@ -255,13 +262,8 @@ updatePlaylistName updates the name of a group in the database by taking the new
 finding the group with the provided groupID, and updating its name in the database.
 The function does not return anything, it updates the group's playlisy name in the database and
 sends a response to the client in JSON format.
-The function follows these steps:
-1. Decode the request body JSON into the entity.Group struct.
-2. If there is an error during unmarshalling, set the response status to 500 (Internal Server Error), write an error message to the response body, and return.
-3. Find the group with the provided groupID from the group repository.
-4. Update the group with the new playlist name, and set the rest of the values to be the values within the database.
-5. Write the updated group information to the response body in JSON format.
 */
+
 func updatePlaylistName(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var group entity.Group
@@ -287,6 +289,13 @@ func updatePlaylistName(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(groupFromRepo)
 
 }
+
+/*
+updateGroupUsers updates the users in a group in the database by taking the new users as input from the request body,
+finding the group with the provided groupID, and updating its users in the database. The function does not return anything,
+it updates the group's users in the database and sends a response to the client in JSON format.
+
+*/
 
 func updateGroupUsers(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
@@ -355,6 +364,7 @@ THe function removes duplicate elements from a slice of strings.
 The function takes in a slice of strings and returns a slice of strings with no duplicates.
 It helps to remove duplicate users from a group as sometimes it can be
 done unintentionally.
+HELPER FUNCTION
 */
 
 func removeDuplicates(s []string) []string {
@@ -376,8 +386,8 @@ func removeDuplicates(s []string) []string {
 /*
 The function deletes a user with the given ID from the user Repository
 The function takes in a response writer and a request as parameters.
-The function does not return anything, it deletes the user from the database and
-sends a response to the client in JSON format.
+The userID is passed in the URL as a parameter.
+The body is not used.
 */
 
 func deleteUser(resp http.ResponseWriter, req *http.Request) {
@@ -394,6 +404,12 @@ func deleteUser(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(http.StatusOK)
 	json.NewEncoder(resp).Encode("User deleted successfully")
 }
+
+/*
+The function deletes a group with the given ID from the group Repository
+The groupID is passed in the URL as a parameter.
+The body is not used.
+*/
 
 func deleteGroup(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
@@ -413,13 +429,12 @@ func deleteGroup(resp http.ResponseWriter, req *http.Request) {
 /*
 The function updates the groups of a user.
 The function takes in a response writer and a request as parameters.
-The function does not return anything, it updates the groups of the user in the database and
-sends a response to the client in JSON format.
 It does so by getting the user from the database, adding the new groups to the user and
 keeping the rest of the values the same as what they were in the database.
 Additionally, it removes any duplicates from the groups array to ensure
 that there are not multiple instances of the same group for a user.
 */
+
 func updateUserGroups(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
 	var user entity.User
@@ -532,6 +547,14 @@ func updateUserFriends(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(user)
 }
 
+/*
+	The function updates the liked song of a group.
+
+It does so by getting the group from the database, adding the new liked song to the group and
+keeping the rest of the values the same as what they were in the database.
+Additionally, it removes any duplicates from the liked song array to ensure
+that there are not multiple instances of the same liked song for a group.
+*/
 func addGroupLikedSong(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-type", "application/json")
@@ -564,6 +587,11 @@ func addGroupLikedSong(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(group)
 
 }
+
+/* The function checks if the song is matched for a groupID and songID in the database.
+It does so by getting the group from the database, checking if the song is in the group.Matched array
+and returning true if it is and false if it is not.
+*/
 
 func checkIfMatched(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")

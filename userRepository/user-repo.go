@@ -27,12 +27,12 @@ type UserRepository interface {
 
 type userRepo struct{}
 
-// newUserRepository
 func NewUserRepository() UserRepository {
 	return &userRepo{}
 }
 
 // saves a new user to the database
+
 func (*userRepo) Save(user *entity.User) (*entity.User, error) {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -65,6 +65,8 @@ func (*userRepo) Save(user *entity.User) (*entity.User, error) {
 	}
 	return user, nil
 }
+
+// Updates a user in the database
 
 func (*userRepo) Update(user *entity.User) (*entity.User, error) {
 	ctx := context.Background()
@@ -113,6 +115,7 @@ func (*userRepo) Update(user *entity.User) (*entity.User, error) {
 }
 
 // function to find a specific user with specified userID
+
 func (*userRepo) FindUser(userID string) (*entity.User, error) {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -174,6 +177,7 @@ func (*userRepo) FindAll() ([]entity.User, error) {
 }
 
 // deletes existing user document with giver UserID
+
 func (*userRepo) DeleteUser(userID string) error {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -202,6 +206,7 @@ func (*userRepo) DeleteUser(userID string) error {
 }
 
 // convertToStringSlice converts an interface{} slice to a []string slice
+
 func convertToStringSlice(slice interface{}) ([]string, error) {
 	// type assertion to []interface{}
 	iSlice, ok := slice.([]interface{})
@@ -225,6 +230,7 @@ func convertToStringSlice(slice interface{}) ([]string, error) {
 convertToMap converts an interface{} map to a map[string]bool map
 It returns an error if the input is not a map[string]interface{} or if any of the values are not bools
 */
+
 func convertToMap(val interface{}) (map[string]bool, error) {
 	if val == nil {
 		return nil, nil

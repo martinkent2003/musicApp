@@ -37,6 +37,7 @@ func NewGroupRepository() GroupRepository {
 The Save method in GroupRepostitory takes a group object input
 and adds the group to the group collection in the firestore database
 */
+
 func (*groupRepo) Save(group *entity.Group) (*entity.Group, error) {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -66,6 +67,7 @@ group objects which are collected from the groups collection in firebase.This me
 uses the convertToStringSlice and convertToMap functions to convert the interface type
 used by firebase into slices and maps that match the type of the fields in the group model.
 */
+
 func (*groupRepo) FindAll() ([]entity.Group, error) {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -107,6 +109,7 @@ group object with the contents of the correspoding document in firestore. Howeve
 since the groupID is already known as it is used to search, the returned object groupID
 is the document ID for the group in firebase.
 */
+
 func (*groupRepo) FindGroup(groupID string) (*entity.Group, error) {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -132,6 +135,12 @@ func (*groupRepo) FindGroup(groupID string) (*entity.Group, error) {
 
 	return &group, nil
 }
+
+/* The DeleteGroup method in GroupRepository takes in a groupID input and then searches
+the collection of groups in firestore to check for matching ID. Then it deletes the
+corresponding document in firestore.
+*/
+
 func (*groupRepo) DeleteGroup(groupID string) error {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -158,6 +167,12 @@ func (*groupRepo) DeleteGroup(groupID string) error {
 
 	return nil
 }
+
+/* The Update method in GroupRepository takes in a group object input and then searches
+the collection of groups in firestore to check for matching ID. Then it updates the
+corresponding document in firestore with the fields in the input group object.
+It also makes sure to only update the fields that are not empty.
+*/
 
 func (*groupRepo) Update(group *entity.Group) (*entity.Group, error) {
 	ctx := context.Background()
