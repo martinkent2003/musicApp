@@ -9,10 +9,11 @@ describe('Login Component', () => {
 
   
     const checkUrl = (counter) => {
+
       if (counter > 60) {
         throw new Error('Timed out waiting for redirect to localhost');
       }
-  
+
       cy.url().then(url => {
         if (!url.includes('http://localhost:4200/')) {
   
@@ -22,6 +23,7 @@ describe('Login Component', () => {
           cy.url().should('include', 'http://localhost:4200/'); // make sure the URL has changed to the localhost URL
         }
       });
+      
     };
   
     checkUrl(0); // start the recursive function with a counter of 0
