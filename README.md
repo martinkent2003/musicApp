@@ -10,6 +10,14 @@ Some of the specific features that the project includes are:
 
 The goal of VibeShare is to increase the enjoyment level for parties and other events by creating playlists that are designed based on the environment and user similarities.
 
+Steps to run locally:
+- Download all necessary dependencies	
+- Open your Firestone database and get JSON google credentials and store in a separate section of your local drive
+- Run in CLI `export GOOGLE_APPLICATION_CREDENTIALS=path/to/JSON`
+- Run in CLI `go build`
+- Run in CLI ‘go run *` to host server
+- Run in CLI ‘npm start`
+
 ## Members
 ### Frontend
 - Akshat Pant
