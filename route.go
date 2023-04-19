@@ -209,7 +209,7 @@ func putUsers(resp http.ResponseWriter, req *http.Request) {
 }
 
 /*
-the PutGroups function updates a pre-existing group to the groupRepo.
+the PutGroup function updates a pre-existing group to the groupRepo.
 It uses the Update method in the GroupRepository interface to save the group to the Firestore database.
 If there is an error, it returns a 500 status code and an error message.
 */
@@ -360,7 +360,7 @@ func updateGroupUsers(resp http.ResponseWriter, req *http.Request) {
 }
 
 /*
-THe function removes duplicate elements from a slice of strings.
+The helper function removes duplicate elements from a slice of strings.
 The function takes in a slice of strings and returns a slice of strings with no duplicates.
 It helps to remove duplicate users from a group as sometimes it can be
 done unintentionally.

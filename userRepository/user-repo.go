@@ -66,7 +66,9 @@ func (*userRepo) Save(user *entity.User) (*entity.User, error) {
 	return user, nil
 }
 
-// Updates a user in the database
+/* The Update method in UserRepository takes a user object input
+and updates the user in the user collection in the firestore database
+*/
 
 func (*userRepo) Update(user *entity.User) (*entity.User, error) {
 	ctx := context.Background()
@@ -114,7 +116,10 @@ func (*userRepo) Update(user *entity.User) (*entity.User, error) {
 	return user, nil
 }
 
-// function to find a specific user with specified userID
+/*
+The FindUser method opens up a Firestore client, gets the user with the given userID and returns the user object
+It looks for the user with the given userID in the users collection by comparing all of the userID's to the given ID
+*/
 
 func (*userRepo) FindUser(userID string) (*entity.User, error) {
 	ctx := context.Background()
@@ -142,6 +147,12 @@ func (*userRepo) FindUser(userID string) (*entity.User, error) {
 	return &user, nil
 }
 
+/*
+The FindAll method opens up a Firestore client, gets all of the users in the users collection
+and returns a slice of user objects which contain all of the users in the database.
+It uses a helper function convertToStringSlice to convert the Friends and LikedSong fields from
+interface{} to []string and convertToMap to convert the GroupAdmin field from interface{} to map[string]bool
+*/
 func (*userRepo) FindAll() ([]entity.User, error) {
 	ctx := context.Background()
 	client, err := firestore.NewClient(ctx, projectId)
@@ -176,7 +187,9 @@ func (*userRepo) FindAll() ([]entity.User, error) {
 	return users, nil
 }
 
-// deletes existing user document with giver UserID
+/* The DeleteUser method takes a userID as input and deletes the user with the given userID from the users collection
+It looks for the user with the given userID in the users collection by comparing all of the userID's to the given ID
+*/
 
 func (*userRepo) DeleteUser(userID string) error {
 	ctx := context.Background()
