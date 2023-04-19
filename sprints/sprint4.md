@@ -18,7 +18,7 @@
 - Component Test e2e:
   - about.cy.js: Tests URL, title, paragraphs, & correct members with images and titles
   - instructions.cy.js: Tests URL, title, instructions, quotes, & checks if button redirects properly
-  - main.cy.js
+  - main.cy.js: Tests Link Spotify, Login, adding a friend, creating a group, choosing a group, like and dislike songs
 - nav.cy.js: Tests if each button on the navigation bar works
 
 ### Backend:
